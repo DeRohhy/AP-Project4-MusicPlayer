@@ -8,5 +8,5 @@ class Song;
 class CsvLoader
 {
 public:
-    std::vector<Song> loadAllMusic(const std::string& library_path);
+    static std::vector<Song> loadAllMusic(const std::string& library_path);
 };

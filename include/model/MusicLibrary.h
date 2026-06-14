@@ -11,6 +11,6 @@ class MusicLibrary
 {
 public:
     MusicLibrary() : songs{ CsvLoader::loadAllMusic(LIBRARY) } {}
-// private:
+private:
     std::vector<Song> songs;
 };

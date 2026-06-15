@@ -4,9 +4,9 @@
 #include "model/Song.h"
 
 
-std::vector<Song> CsvLoader::loadAllMusic(const std::string& library_path)
+std::vector<std::unique_ptr<Song>> CsvLoader::loadAllMusic(const std::string& library_path)
 {
-    std::vector<Song> songs;
+   std::vector<std::unique_ptr<Song>> songs;
 
     std::ifstream library(library_path);
 
@@ -22,26 +22,25 @@ std::vector<Song> CsvLoader::loadAllMusic(const std::string& library_path)
         std::stringstream ss(line);
         std::string field;
 
-        Song song;
+        std::unique_ptr<Song> song = std::make_unique<Song>();
 
-        std::getline(ss, song.title, ',');
-        std::getline(ss, song.artist, ',');
-        std::getline(ss, song.album, ',');
-        std::getline(ss, song.genre, ',');
+        std::getline(ss, song->title, ',');
+        std::getline(ss, song->artist, ',');
+        std::getline(ss, song->album, ',');
+        std::getline(ss, song->genre, ',');
         
         std::getline(ss, field, ','); 
-        try { song.year = std::stoi(field); }
-        catch(...) { song.year = 0; }
+        try { song->year = std::stoi(field); }
+        catch(...) { song->year = 0; }
 
         std::getline(ss, field, ','); 
-        try { song.duration_sec = std::stoi(field); }
-        catch(...) { song.duration_sec = 0; }
+        try { song->duration_sec = std::stoi(field); }
+        catch(...) { song->duration_sec = 0; }
 
-        std::getline(ss, song.file_path);
+        std::getline(ss, song->file_path);
 
-        songs.push_back(song);
+        songs.push_back(std::move(song));
     }
 
-    library.close();
     return songs;
 }

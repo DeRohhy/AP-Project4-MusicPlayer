@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "model/Song.h"
 #include "io/CsvLoader.h"
 
@@ -12,5 +13,5 @@ class MusicLibrary
 public:
     MusicLibrary() : songs{ CsvLoader::loadAllMusic(LIBRARY) } {}
 private:
-    std::vector<Song> songs;
+    std::vector<std::unique_ptr<Song>> songs;
 };

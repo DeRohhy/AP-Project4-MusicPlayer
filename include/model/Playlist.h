@@ -9,6 +9,6 @@ public:
     Playlist() = default;
 
     void addSong(Song* song) { songs.push_back(song); }
-// private:
+private:
     std::vector<Song*> songs;    
 };

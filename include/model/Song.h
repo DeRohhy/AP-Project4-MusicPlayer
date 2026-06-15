@@ -11,6 +11,8 @@ public:
     Song() = default;
     ~Song() = default;
 
+    std::string getPath() { return file_path; }
+
 private:
     std::string title;
     std::string artist;

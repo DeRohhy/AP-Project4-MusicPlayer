@@ -19,7 +19,7 @@ public:
         playlists{ M3uLoader::loadPlaylists(PLAYLISTS, *this) } {}
 
     Song* getSong(const std::string& path);
-private:
+// private:
     std::vector<std::unique_ptr<Song>> all_songs;
     std::vector<Playlist> playlists;
 };

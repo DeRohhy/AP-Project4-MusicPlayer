@@ -1,24 +1,50 @@
 #include "io/ConfigManager.h"
 
 #include <fstream>
-#include <unordered_set>
 #include <sstream>
+#include <iostream>
 
 const std::string config_path = "data/settings.cfg";
 
 ConfigManager::ConfigManager()
 {
-    loadConfig();
+    load();
 }
 
-void ConfigManager::loadConfig()
+ConfigManager::~ConfigManager()
 {
-    static const std::unordered_set<std::string> allowed_fields
+    save();
+}
+
+std::string ConfigManager::get(std::string key)
+{
+    if (!isValidField(key))
+        return "";
+    
+    return config[key];
+}
+
+void ConfigManager::set(std::string key, std::string value)
+{
+    if (!isValidField(key))
+        return;
+    
+    config[key] = value;
+}
+
+bool ConfigManager::isValidField(std::string key)
+{
+    static const std::unordered_set<std::string> ALLOWED_FIELDS
     {
         "last_played",
         "active_playlist"
     };
 
+    return ALLOWED_FIELDS.find(key) != ALLOWED_FIELDS.end();
+}
+
+void ConfigManager::load()
+{
     std::ifstream file(config_path, std::ios::in);
 
     if (!file.is_open())
@@ -33,12 +59,23 @@ void ConfigManager::loadConfig()
         std::stringstream ss(line);
 
         std::string key;
-        std::getline(ss, key, ':');
+        std::getline(ss, key, ':'); // settings are save in key:value format
 
         std::string value = "";
         ss >> value;
 
-        if (allowed_fields.find(key) != allowed_fields.end())
+        if (isValidField(key))
             config[key] = value;
     }
+}
+
+void ConfigManager::save()
+{
+    std::ofstream file(config_path, std::ios::out);
+
+    if (!file.is_open())
+        throw std::runtime_error("Failed to open config file: " + config_path);
+
+    for(const auto& [key, value]: config)
+        file << key << ':' << value << '\n';
 }

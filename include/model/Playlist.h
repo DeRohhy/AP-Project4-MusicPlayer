@@ -1,14 +1,17 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "model/Song.h"
-#include <iostream>
 
 class Playlist
 {
 public:
     Playlist() = default;
 
+    std::string getPlaylistName() { return playlist_name; }
+
+    void setPlaylistName(std::string name) { playlist_name = name; }
     void addSong(Song* song) { songs.push_back(song); }
 
     void sortByTitle();
@@ -19,5 +22,6 @@ public:
     void sortByDuration();
 
 private:
+    std::string playlist_name;
     std::vector<Song*> songs;
 };

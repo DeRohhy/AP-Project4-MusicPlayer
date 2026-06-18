@@ -3,7 +3,7 @@
 #include <ncurses.h>
 #include <sstream>
 #include <iomanip>
-#include <iostream>
+
 void PlayerView::draw()
 {   
     song = music_library.getSong(music_player.getSoundPath());

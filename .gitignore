@@ -53,3 +53,5 @@ Thumbs.db
 # Debug folders
 Debug/
 Release/
+
+data/musics

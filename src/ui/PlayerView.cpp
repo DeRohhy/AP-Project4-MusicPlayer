@@ -1,24 +1,30 @@
 #include "ui/PlayerView.h"
 
 #include <ncurses.h>
-#include <iostream>
 #include <sstream>
 #include <iomanip>
-
+#include <iostream>
 void PlayerView::draw()
-{
-    if (song == nullptr)
-        return;
-    
+{   
+    song = music_library.getSong(music_player.getSoundPath());
+
+    refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
-    box(window, 0, 0);
+
+    if (is_focused)
+    {
+        wattron(window, COLOR_PAIR(2));   
+        box(window, 0, 0);
+        wattroff(window, COLOR_PAIR(2));   
+    }
+    else
+        box(window, 0, 0);
 
     drawTitle();
     drawArtistAndAlbum();
-    drawDuration(100);
+    drawDuration();
     drawControls();
-
     wrefresh(window);
 }
 
@@ -46,8 +52,9 @@ void PlayerView::drawArtistAndAlbum()
     wattroff(window, A_DIM);   
 }
 
-void PlayerView::drawDuration(int cur_time)
+void PlayerView::drawDuration()
 {
+    int cur_time = (int)music_player.getTime();
     int full = ((double)cur_time / (double)song->getDuration()) * DURATION_BAR_LEN;
     int remaining = DURATION_BAR_LEN - full;
 
@@ -87,24 +94,91 @@ void PlayerView::drawControls()
     
     wmove(window, 2, 40);
     
-    addPadding(2);
+    addPadding(3);
     
-    wattron(window, shuffle ? COLOR_PAIR(3) : A_DIM);
+    wattron(window, shuffle ? COLOR_PAIR(2) : A_DIM);
     wprintw(window, "[s]⇄");
-    wattroff(window, shuffle ? COLOR_PAIR(3) : A_DIM);
+    wattroff(window, shuffle ? COLOR_PAIR(2) : A_DIM);
     
     addPadding(3);
     wattron(window, A_DIM);
     wprintw(window, "[j]⏮");
     addPadding(3);
-    wprintw(window, "[p]⏵");
+    wprintw(window, music_player.isPlaying() ? "[p]⏸" : "[p]⏵");
     addPadding(3);
     wprintw(window, "[l]⏭");
     wattroff(window, A_DIM);
 
 
     addPadding(3);
-    wattron(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(3) : A_DIM);
+    wattron(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);
     wprintw(window, "[r]%s", playback_mode == "REPEAT_ONE" ? "↻₁" : "↻");
-    wattron(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(3) : A_DIM);
+    wattroff(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);
+}
+
+void PlayerView::handleInput(int op)
+{
+    if (!is_focused)
+        return;
+
+    switch (op)
+    {
+    case 's':
+        handleShuffle();
+        break;
+    case 'j':
+        handlePreviousTrack();
+        break;
+    case 'p':
+        handlePlay();
+        break;
+    case 'l':
+        handleNextTrack();
+        break;
+    case 'r':
+        handlePlaybackMode();
+        break;
+    }
+
+    wrefresh(window);
+}
+
+void PlayerView::handleShuffle()
+{
+    if (config_manager.get("shuffle") == "1")
+        config_manager.set("shuffle", "0");
+    else
+        config_manager.set("shuffle", "1");
+}
+
+void PlayerView::handleNextTrack()
+{
+
+}
+
+void PlayerView::handlePreviousTrack()
+{
+
+}
+
+void PlayerView::handlePlay()
+{
+    if (music_player.isPlaying())
+        music_player.pause();
+    else
+        music_player.play();
+
+}
+
+void PlayerView::handlePlaybackMode()
+{
+    std::string cur_mode = config_manager.get("playback_mode"), new_mode;
+    if (cur_mode == "NO_REPEAT")
+        new_mode = "REPEAT_ALL";
+    else if (cur_mode == "REPEAT_ALL")
+        new_mode = "REPEAT_ONE";
+    else
+        new_mode = "NO_REPEAT";
+    
+    config_manager.set("playback_mode", new_mode);
 }

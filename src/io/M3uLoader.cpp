@@ -15,10 +15,12 @@ std::vector<Playlist> M3uLoader::loadPlaylists(const std::string& dir, MusicLibr
             continue;
         
         std::ifstream file(entry.path());
-
         if (!file) continue;
 
+        std::string folderName = entry.path().stem().string();
         Playlist playlist;
+        playlist.setPlaylistName(folderName);
+
         std::string song_path;
         while (std::getline(file, song_path))
         {

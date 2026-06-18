@@ -1,7 +1,8 @@
-# AI Generated!
+# AI Generated & Corrected!
 
 CXX = g++ # The compiler we use
-CXXFLAGS = -std=c++20 -Wall -Iinclude # Flags: C++20 standard, show warnings, look in include/ for headers
+# Flags: C++20 standard, show warnings, look in include/ for headers, and auto-generate .d dependency files
+CXXFLAGS = -std=c++20 -Wall -Iinclude -MMD -MP 
 
 # Find every .cpp under src/, automatically
 SRCS = $(shell find src -name '*.cpp')
@@ -12,11 +13,13 @@ OBJS = $(SRCS:src/%.cpp=build/%.o)
 # The .d (dependency) files Make will auto-generate
 DEPS = $(OBJS:.o=.d)
 
+LIBS = -lncurses
+
 TARGET = app
 
 # --- Link phase: all .o files into the program ---
 $(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $@
+	$(CXX) $(OBJS) -o $@ $(LIBS)
 
 # --- Compile phase: one pattern rule for ALL files ---
 build/%.o: src/%.cpp

@@ -36,8 +36,8 @@ bool ConfigManager::isValidField(std::string key)
 {
     static const std::unordered_set<std::string> ALLOWED_FIELDS
     {
-        "last_played",
-        "active_playlist"
+        "shuffle",
+        "playback_mode"
     };
 
     return ALLOWED_FIELDS.find(key) != ALLOWED_FIELDS.end();

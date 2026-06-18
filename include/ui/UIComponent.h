@@ -26,10 +26,10 @@ public:
     void addPadding(int amount);
 
 protected:
-    ConfigManager& config_manager;
     WINDOW* window;
     int start_y;
     int start_x;
     int height;
     int width;
+    ConfigManager config_manager;
 };

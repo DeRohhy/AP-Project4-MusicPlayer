@@ -103,12 +103,18 @@ void PlayerView::drawControls()
     addPadding(3);
     wattron(window, A_DIM);
     wprintw(window, "[j]⏮");
+    wattroff(window, A_DIM);
     addPadding(3);
+
+
+    wattron(window, music_player.isPlaying() ? COLOR_PAIR(2) : A_DIM);
     wprintw(window, music_player.isPlaying() ? "[p]⏸" : "[p]⏵");
+    wattroff(window, music_player.isPlaying() ? COLOR_PAIR(2) : A_DIM);
     addPadding(3);
+
+    wattron(window, A_DIM);
     wprintw(window, "[l]⏭");
     wattroff(window, A_DIM);
-
 
     addPadding(3);
     wattron(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);

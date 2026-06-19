@@ -24,12 +24,23 @@ std::string UIComponent::timeToStr(int time)
     return ss.str();
 }
 
+
+void UIComponent::drawOutline()
+{
+    if (is_focused) // draw green outline if this window is focused
+    {
+        wattron(window, COLOR_PAIR(2));   
+        box(window, 0, 0);
+        wattroff(window, COLOR_PAIR(2));   
+    }
+    else
+        box(window, 0, 0);
+}
+
 void UIComponent::addPadding(int amount)
 {
     // waddnstr(window, " ", amount);
     for (int i = 0; i < amount; i++)
         waddch(window, ' ');
 }
-
-
 

@@ -12,14 +12,7 @@ void PlayerView::draw()
     // Clear the window before redrawing to prevent ghosting
     werase(window);
 
-    if (is_focused)
-    {
-        wattron(window, COLOR_PAIR(2));   
-        box(window, 0, 0);
-        wattroff(window, COLOR_PAIR(2));   
-    }
-    else
-        box(window, 0, 0);
+    drawOutline();
 
     drawTitle();
     drawArtistAndAlbum();

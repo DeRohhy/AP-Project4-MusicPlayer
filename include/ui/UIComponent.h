@@ -23,10 +23,11 @@ public:
 
     // Truncate to `width` chars, ending with "..." if it was too long
     std::string fit(const std::string& s, size_t max_width);
-
     std::string timeToStr(int time);
 
+    void drawOutline();
     void addPadding(int amount);
+    
 
 protected:
     WINDOW* window;

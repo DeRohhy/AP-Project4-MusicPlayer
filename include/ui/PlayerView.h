@@ -32,7 +32,7 @@ private:
     Player& music_player;
     MusicLibrary& music_library;
 
-    Song* song;
+    const Song* song;
     
     void drawTitle();
     void drawArtistAndAlbum();

@@ -11,13 +11,13 @@ public:
     Song() = default;
     ~Song() = default;
 
-    std::string getTitle() { return title; }
-    std::string getArtist() { return artist; }
-    std::string getAlbum() { return album; }
-    std::string getGenre() { return genre; }
-    int getYear() { return year; }
-    int getDuration() { return duration_sec; }
-    std::string getPath() { return file_path; }
+    std::string getTitle() const { return title; }
+    std::string getArtist() const { return artist; }
+    std::string getAlbum() const { return album; }
+    std::string getGenre() const { return genre; }
+    int getYear() const { return year; }
+    int getDuration() const { return duration_sec; }
+    std::string getPath() const { return file_path; }
 
 private:
     std::string title;

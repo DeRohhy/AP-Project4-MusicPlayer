@@ -5,17 +5,17 @@
 void Playlist::sortByTitle()
 {
     std::sort(songs.begin(), songs.end(),
-    [&](Song* A, Song* B)
+    [&](const Song* A, const Song* B)
     {
         return A->getTitle() < B->getTitle();
     }
     );
 }
 
-void Playlist::sortByArtist()
+void Playlist::sortByArtist() 
 {
     std::sort(songs.begin(), songs.end(),
-    [&](Song* A, Song* B)
+    [&](const Song* A, const Song* B)
     {
         return A->getArtist() < B->getArtist();
     }
@@ -24,7 +24,7 @@ void Playlist::sortByArtist()
 void Playlist::sortByAlbum()
 {
     std::sort(songs.begin(), songs.end(),
-    [&](Song* A, Song* B)
+    [&](const Song* A, const Song* B)
     {
         return A->getAlbum() < B->getAlbum();
     }
@@ -34,7 +34,7 @@ void Playlist::sortByAlbum()
 void Playlist::sortByGenre()
 {
     std::sort(songs.begin(), songs.end(),
-    [&](Song* A, Song* B)
+    [&](const Song* A, const Song* B)
     {
         return A->getGenre() < B->getGenre();
     }
@@ -44,7 +44,7 @@ void Playlist::sortByGenre()
 void Playlist::sortByYear(bool sort_descending)
 {
     std::sort(songs.begin(), songs.end(),
-    [&](Song* A, Song* B)
+    [&](const Song* A, const Song* B)
     {
         if (sort_descending)
             return A->getYear() > B->getYear();
@@ -56,7 +56,7 @@ void Playlist::sortByYear(bool sort_descending)
 void Playlist::sortByDuration()
 {
     std::sort(songs.begin(), songs.end(),
-    [&](Song* A, Song* B)
+    [&](const Song* A, const Song* B)
     {
         return A->getDuration() < B->getDuration();
     }

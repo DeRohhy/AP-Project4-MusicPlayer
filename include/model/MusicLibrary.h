@@ -18,7 +18,8 @@ public:
         all_songs{ CsvLoader::loadAllMusic(LIBRARY) },
         playlists{ M3uLoader::loadPlaylists(PLAYLISTS, *this) } {}
 
-    Song* getSong(const std::string& path);
+    const Song* getSong(const std::string& path);
+    // Playlist 
 // private:
     std::vector<std::unique_ptr<Song>> all_songs;
     std::vector<Playlist> playlists;

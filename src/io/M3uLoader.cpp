@@ -24,7 +24,7 @@ std::vector<Playlist> M3uLoader::loadPlaylists(const std::string& dir, MusicLibr
         std::string song_path;
         while (std::getline(file, song_path))
         {
-            Song* song = library.getSong(song_path);
+            const Song* song = library.getSong(song_path);
 
             if (song) playlist.addSong(song);
         }

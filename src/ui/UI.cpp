@@ -33,13 +33,17 @@ UI::~UI()
 
 void UI::run()
 {
-    music_player.setSound(music_library.all_songs[15].get()->getPath());
-    music_player.play();
+    music_player.setSound(music_library.all_songs[4].get()->getPath());
+    // music_player.play();
 
     init_player_view();
+    init_library_panel();
 
 
-    std::vector<UIComponent*> components = {player_view.get()};
+    std::vector<UIComponent*> components = {
+        player_view.get(),
+        library_panel.get(),
+    };
     int focused_index = 0;
     components[focused_index]->setFocus(true);
 
@@ -96,6 +100,7 @@ void UI::draw()
     }
 
     player_view->draw();
+    library_panel->draw();
     
 }
 
@@ -104,9 +109,27 @@ void UI::init_player_view()
     int start_x, start_y, height, width;
     height = 4;
     width = SCREEN_WIDTH;
-    start_y = 0;
+    start_y = 15;
     start_x = 0;
 
     player_view = std::make_unique<PlayerView>(start_y, start_x, height, width,
-                                                config_manager, music_player, music_library );
+                                               config_manager,
+                                               music_player,
+                                               music_library
+                                              );
+}
+
+void UI::init_library_panel()
+{
+    int start_x, start_y, height, width;
+    height = 15;
+    width = 26;
+    start_y = 0;
+    start_x = 0;
+
+    library_panel = std::make_unique<LibraryPanel>(start_y, start_x, height, width,
+                                               config_manager,
+                                               music_player,
+                                               music_library
+                                              );
 }

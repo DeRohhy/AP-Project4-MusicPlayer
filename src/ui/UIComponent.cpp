@@ -34,7 +34,11 @@ void UIComponent::drawOutline()
         wattroff(window, COLOR_PAIR(2));   
     }
     else
+    {
+        wattron(window, A_DIM);
         box(window, 0, 0);
+        wattroff(window, A_DIM);
+    }
 }
 
 void UIComponent::addPadding(int amount)

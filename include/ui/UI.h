@@ -5,6 +5,7 @@
 #include "model/MusicLibrary.h"
 #include "player/Player.h"
 #include "ui/PlayerView.h"
+#include "ui/LibraryPanel.h"
 
 class UI
 {
@@ -23,6 +24,8 @@ private:
     MusicLibrary music_library;
     Player music_player;
     std::unique_ptr<PlayerView> player_view;    
+    std::unique_ptr<LibraryPanel> library_panel;
 
     void init_player_view();
+    void init_library_panel();
 };

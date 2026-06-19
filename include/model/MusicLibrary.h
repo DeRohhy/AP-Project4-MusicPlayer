@@ -11,6 +11,7 @@
 
 const std::string LIBRARY = "data/library.csv";
 const std::string PLAYLISTS = "data/playlists";
+
 class MusicLibrary
 {
 public:
@@ -19,7 +20,8 @@ public:
         playlists{ M3uLoader::loadPlaylists(PLAYLISTS, *this) } {}
 
     const Song* getSong(const std::string& path);
-    // Playlist 
+    std::vector<Playlist> getPlaylistsRange(int starting_index, int n) const;
+    size_t getPlaylistAmount() const { return playlists.size(); }
 // private:
     std::vector<std::unique_ptr<Song>> all_songs;
     std::vector<Playlist> playlists;

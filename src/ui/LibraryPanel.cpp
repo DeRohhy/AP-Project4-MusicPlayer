@@ -84,6 +84,9 @@ void LibraryPanel::showPlaylists()
 
 void LibraryPanel::drawScrollbar()
 {
+    if (music_library.getPlaylistAmount() <= MAX_PLAYLIST_VIEW)
+        return;
+
     double height = MAX_PLAYLIST_VIEW;
     double visible_items = MAX_PLAYLIST_VIEW;
     double total_items = (music_library.getPlaylistAmount());
@@ -107,7 +110,6 @@ void LibraryPanel::drawScrollbar()
     wattroff(window, A_DIM);
 }
 
-
 void LibraryPanel::handleKeyUp()
 {
     if (selected_playlist == 0)
@@ -121,13 +123,14 @@ void LibraryPanel::handleKeyUp()
 
 void LibraryPanel::handleKeyDown()
 {
-    if (selected_playlist + 1 == MAX_PLAYLIST_VIEW &&
-        playlists_start_index + MAX_PLAYLIST_VIEW < (int)music_library.getPlaylistAmount()
+    int visible_items = std::min(MAX_PLAYLIST_VIEW, (int)music_library.getPlaylistAmount());
+    if (selected_playlist + 1 == visible_items &&
+        playlists_start_index + visible_items < (int)music_library.getPlaylistAmount()
     )
     {
-        playlists_start_index++;            
+        playlists_start_index++;
     }
-    else if (selected_playlist + 1 < MAX_PLAYLIST_VIEW)
+    else if (selected_playlist + 1 < visible_items)
         selected_playlist++;
 }
 

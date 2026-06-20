@@ -38,11 +38,12 @@ void UI::run()
 
     init_player_view();
     init_library_panel();
-
+    init_playlist_view();
 
     std::vector<UIComponent*> components = {
         player_view.get(),
         library_panel.get(),
+        playlist_view.get(),
     };
     int focused_index = 0;
     components[focused_index]->setFocus(true);
@@ -101,6 +102,7 @@ void UI::draw()
 
     player_view->draw();
     library_panel->draw();
+    playlist_view->draw();
     
 }
 
@@ -123,13 +125,28 @@ void UI::init_library_panel()
 {
     int start_x, start_y, height, width;
     height = 15;
-    width = 26;
+    width = 28;
     start_y = 0;
     start_x = 0;
 
     library_panel = std::make_unique<LibraryPanel>(start_y, start_x, height, width,
-                                               config_manager,
-                                               music_player,
-                                               music_library
-                                              );
+                                                   config_manager,
+                                                   music_player,
+                                                   music_library
+                                                  );
+}
+
+void UI::init_playlist_view()
+{
+    int start_x, start_y, height, width;
+    height = 15;
+    width = SCREEN_WIDTH - 28;
+    start_y = 0;
+    start_x = 28;
+
+    playlist_view = std::make_unique<PlaylistView>(start_y, start_x, height, width,
+                                                   config_manager,
+                                                   music_player,
+                                                   music_library
+                                                  );
 }

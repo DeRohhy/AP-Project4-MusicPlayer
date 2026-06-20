@@ -69,7 +69,8 @@ void LibraryPanel::showPlaylists()
         else
             wattron(window, A_DIM);
         
-        mvwprintw(window, cur_y++, 2, "▶ %s", visible_playlists[i].getPlaylistName().c_str());
+        int max_name_len = 16;
+        mvwprintw(window, cur_y++, 2, "▶ %s",  fit(visible_playlists[i].getPlaylistName(), max_name_len).c_str());
         
         if (is_focused && selected_playlist == i)
             wattroff(window, COLOR_PAIR(1));

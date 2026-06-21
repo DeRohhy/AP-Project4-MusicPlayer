@@ -19,9 +19,12 @@ public:
         all_songs{ CsvLoader::loadAllMusic(LIBRARY) },
         playlists{ M3uLoader::loadPlaylists(PLAYLISTS, *this) } {}
 
-    const Song* getSong(const std::string& path);
+    const Song* getSong(const std::string& path) const;
+    std::optional<Playlist> getPlaylist(const std::string& playlist_name) const;
+    
     std::vector<Playlist> getPlaylistsRange(int starting_index, int n) const;
     size_t getPlaylistAmount() const { return playlists.size(); }
+    
 // private:
     std::vector<std::unique_ptr<Song>> all_songs;
     std::vector<Playlist> playlists;

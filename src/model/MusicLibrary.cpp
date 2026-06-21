@@ -1,6 +1,6 @@
 #include "model/MusicLibrary.h"
 
-const Song* MusicLibrary::getSong(const std::string& path)
+const Song* MusicLibrary::getSong(const std::string& path) const
 {
     for (const auto& song: all_songs)
     {
@@ -8,6 +8,16 @@ const Song* MusicLibrary::getSong(const std::string& path)
             return song.get();
     }
     return nullptr;
+}
+
+std::optional<Playlist> MusicLibrary::getPlaylist(const std::string& playlist_name) const
+{
+    for (const auto& playlist: playlists)
+    {
+        if (playlist.getPlaylistName() == playlist_name)
+            return playlist;
+    }
+    return std::nullopt;
 }
 
 std::vector<Playlist> MusicLibrary::getPlaylistsRange(int starting_index, int n) const

@@ -48,3 +48,13 @@ void UIComponent::addPadding(int amount)
         waddch(window, ' ');
 }
 
+void UIComponent::drawDivider(int y)
+{
+    int padding = 2;
+    int x = padding;
+
+    wattron(window, A_DIM);
+    while (x < width - padding)
+        mvwprintw(window, y, x++, "─");
+    wattroff(window, A_DIM);
+}

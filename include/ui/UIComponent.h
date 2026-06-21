@@ -27,7 +27,7 @@ public:
 
     void drawOutline();
     void addPadding(int amount);
-    
+    void drawDivider(int y);
 
 protected:
     WINDOW* window;

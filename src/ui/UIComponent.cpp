@@ -58,3 +58,26 @@ void UIComponent::drawDivider(int y)
         mvwprintw(window, y, x++, "─");
     wattroff(window, A_DIM);
 }
+
+void UIComponent::drawScrollBar(int pos_y, int pos_x,
+                                int height,
+                                int visible_items, int total_items,
+                                int scroll_pos)
+{
+    int thumb_size = (double)height * ((double)visible_items / (double)total_items);
+    int thumb_y = (double)(height - thumb_size) * (double)scroll_pos / (double)(total_items - visible_items);
+    int thumb_x = pos_x;
+
+    int cur_y = pos_y;
+
+    wattron(window, A_DIM);
+    for (int i = 0; i < thumb_y; i++)
+        mvwprintw(window, cur_y++, thumb_x, "┃");
+        
+    for (int i = 0; i < thumb_size; i++)
+        mvwprintw(window, cur_y++, thumb_x, "█");
+
+    for (int i = 0; i + thumb_y + thumb_size < height; i++)
+        mvwprintw(window, cur_y++, thumb_x, "┃");
+    wattroff(window, A_DIM);
+}

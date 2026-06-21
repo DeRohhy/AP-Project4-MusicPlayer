@@ -40,7 +40,6 @@ private:
 
     void drawHeader();
     void showPlaylists();
-    void drawScrollbar();
 
     void handleKeyUp();
     void handleKeyDown();

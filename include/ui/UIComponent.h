@@ -28,6 +28,10 @@ public:
     void drawOutline();
     void addPadding(int amount);
     void drawDivider(int y);
+    void drawScrollBar(int pos_y, int pos_x,
+                       int height,
+                       int visible_items, int total_items,
+                       int scroll_pos);
 
 protected:
     WINDOW* window;

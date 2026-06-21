@@ -49,8 +49,6 @@ void LibraryPanel::drawHeader()
 
 void LibraryPanel::showPlaylists()
 {
-
-
     if (visible_playlists.empty())
     {
         wattron(window, A_DIM);
@@ -80,35 +78,14 @@ void LibraryPanel::showPlaylists()
             wattroff(window, A_DIM);
     }
 
-    drawScrollbar();
-}
-
-void LibraryPanel::drawScrollbar()
-{
-    if (music_library.getPlaylistAmount() <= MAX_PLAYLIST_VIEW)
-        return;
-
-    double height = MAX_PLAYLIST_VIEW;
-    double visible_items = MAX_PLAYLIST_VIEW;
-    double total_items = (music_library.getPlaylistAmount());
-    double scroll_pos = playlists_start_index;
-    int thumb_size = height * (visible_items / total_items);
-    int thomb_y = (height - thumb_size) * scroll_pos / (total_items - visible_items);
-    
-    
-    int cur_y = 2;
-    int thomb_x = width - 2;
-    
-    wattron(window, A_DIM);
-    for (int i = 0; i < thomb_y; i++)
-        mvwprintw(window, cur_y++, thomb_x, "┃");
-        
-    for (int i = 0; i < thumb_size; i++)
-        mvwprintw(window, cur_y++, thomb_x, "█");
-
-    for (int i = 0; i + thomb_y + thumb_size < MAX_PLAYLIST_VIEW; i++)
-        mvwprintw(window, cur_y++, thomb_x, "┃");
-    wattroff(window, A_DIM);
+    if (music_library.getPlaylistAmount() >= MAX_PLAYLIST_VIEW)
+    {
+        drawScrollBar(2, width - 2,
+                      MAX_PLAYLIST_VIEW,
+                      MAX_PLAYLIST_VIEW, music_library.getPlaylistAmount(),
+                      playlists_start_index
+                     );
+    }
 }
 
 void LibraryPanel::handleKeyUp()

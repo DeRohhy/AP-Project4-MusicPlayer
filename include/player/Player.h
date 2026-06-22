@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../external/miniaudio.h"
+#include "model/Playlist.h"
 #include <string>
 
 class Player
@@ -15,6 +16,7 @@ public:
     bool isFinished() { return ma_sound_at_end(&sound); }
 
     void setSound(const std::string& path);
+    void setPlaylist(Playlist* playlist);
 
     void play();
     void pause();
@@ -24,4 +26,5 @@ private:
     ma_engine engine;
     ma_sound sound;
     std::string sound_path;
+    bool sound_initialized; 
 };

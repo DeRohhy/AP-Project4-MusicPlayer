@@ -19,7 +19,7 @@ void PlayerView::draw()
     drawTitle(start_y);
     drawArtistAndAlbum(start_y + 1);
     drawDuration(start_y, start_x);
-    drawControls(start_y + 1, start_x);
+    drawControls(start_y + 1, start_x - 1);
     wrefresh(window);
 }
 
@@ -94,9 +94,9 @@ void PlayerView::drawControls(int start_y, int start_x)
     bool shuffle = config_manager.get("shuffle") == "1";
     bool is_playing = music_player.isPlaying();
     std::string playback_mode = config_manager.get("playback_mode"); 
-    int gap = 3;
+    int gap = 2;
 
-    wmove(window, 2, start_x);
+    wmove(window, start_y, start_x);
     
     addPadding(gap);
     
@@ -105,15 +105,29 @@ void PlayerView::drawControls(int start_y, int start_x)
     wattroff(window, shuffle ? COLOR_PAIR(2) : A_DIM);
     
     addPadding(gap);
+
     wattron(window, A_DIM);
     wprintw(window, "[j]⏮");
     wattroff(window, A_DIM);
+    
     addPadding(gap);
 
+    wattron(window, A_DIM);
+    wprintw(window, "[←]-%d", SEEK_AMOUNT);
+    wattroff(window, A_DIM);
+
+    addPadding(gap);
 
     wattron(window, is_playing ? COLOR_PAIR(2) : A_DIM);
     wprintw(window, is_playing ? "[p]⏸" : "[p]⏵");
     wattroff(window, is_playing ? COLOR_PAIR(2) : A_DIM);
+
+    addPadding(gap);
+
+    wattron(window, A_DIM);
+    wprintw(window, "[→]+%d", SEEK_AMOUNT);
+    wattroff(window, A_DIM);
+
     addPadding(gap);
 
     wattron(window, A_DIM);
@@ -139,8 +153,14 @@ void PlayerView::handleInput(int op)
     case 'j':
         handlePreviousTrack();
         break;
+    case KEY_LEFT:
+        seekBackward();
+        break;
     case 'p':
         handlePlay();
+        break;
+    case KEY_RIGHT:
+        seekForward();
         break;
     case 'l':
         handleNextTrack();
@@ -191,4 +211,14 @@ void PlayerView::handlePlaybackMode()
         new_mode = "NO_REPEAT";
     
     config_manager.set("playback_mode", new_mode);
+}
+
+void PlayerView::seekForward(int seconds)
+{
+    music_player.seekBy(SEEK_AMOUNT);
+}
+
+void PlayerView::seekBackward(int seconds)
+{
+    music_player.seekBy(-SEEK_AMOUNT);
 }

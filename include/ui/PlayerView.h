@@ -26,8 +26,9 @@ private:
     static constexpr size_t MAX_TITLE_LEN = 32;
     static constexpr size_t MAX_ARTIST_LEN = 16;
     static constexpr size_t MAX_ALBUM_LEN = 16;
-    static constexpr int DURATION_BAR_LEN = 25;
+    static constexpr int DURATION_BAR_LEN = 34;
     static constexpr int SIDE_MARGIN = 2;
+    static constexpr int SEEK_AMOUNT = 10; // in seconds
 
     ConfigManager& config_manager;
     Player& music_player;
@@ -45,4 +46,6 @@ private:
     void handleNextTrack();
     void handlePlay();
     void handlePlaybackMode();
+    void seekForward(int seconds = SEEK_AMOUNT);
+    void seekBackward(int seconds = SEEK_AMOUNT);
 };

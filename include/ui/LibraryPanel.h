@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ui/UIComponent.h"
+#include "ui/IAppController.h"
 
 #include "player/Player.h"
 #include "io/ConfigManager.h"
@@ -14,13 +15,13 @@ class LibraryPanel : public UIComponent
 {
 public:
     LibraryPanel(int y, int x, int h, int w,
-                 ConfigManager& _config_manager,
-                 Player& _music_player,
-                 MusicLibrary& _music_library)
+               MusicLibrary& _music_library,
+               Player& _music_player,
+               IAppController& _controller)
         : UIComponent(y, x, h, w),
-            config_manager(_config_manager),
-            music_player(_music_player),
-            music_library(_music_library)
+          music_library(_music_library),
+          music_player(_music_player),
+          controller(_controller)
     {}
 
     void draw() override;
@@ -30,9 +31,9 @@ private:
     static constexpr int MAX_VISIBLE_PLAYLISTS = 8;
     static constexpr int SIDE_MARGIN = 2;
     
-    ConfigManager& config_manager;
-    Player& music_player;
     MusicLibrary& music_library;
+    Player& music_player;
+    IAppController& controller;
     
     std::vector<Playlist> visible_playlists;
     

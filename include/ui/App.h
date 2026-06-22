@@ -26,7 +26,7 @@ public:
     void advanceTrack() override;
     void changePlaybackMode() override;
     // void playSong(const std::string& path) override;
-    // void selectPlaylist(const std::string& playlist_name) override;
+    void selectPlaylist(const std::string& playlist_name) override;
     void seek(int seconds) override;
 
 private:

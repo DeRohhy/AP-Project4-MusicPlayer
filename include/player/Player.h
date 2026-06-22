@@ -22,6 +22,7 @@ public:
     bool isPlaying();
     float getTime();
     std::string getSoundPath() { return sound_path; }
+    std::string getPlaylistName() { return active_playlist->getPlaylistName(); }
     bool isFinished() { return ma_sound_at_end(&sound); }
     bool isAtEndOfQueue() const; // ignores playback mode
     bool isAtStartOfQueue() const; // ignores playback mode

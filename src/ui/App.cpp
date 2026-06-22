@@ -165,6 +165,13 @@ void App::changePlaybackMode() // NO_REPEAT -> REPEAT_ALL -> REPEAT_ONE -> NO_RE
         music_player.setPlaybackMode(PlaybackMode::NO_REPEAT);
 }
 
+void App::selectPlaylist(const std::string& playlist_name)
+{
+    config_manager.set("focused_playlist", playlist_name);
+
+}
+
+
 void App::seek(int seconds)
 {
     music_player.seekBy(seconds);
@@ -196,9 +203,9 @@ void App::init_library_panel()
     start_x = 0;
 
     library_panel = std::make_unique<LibraryPanel>(start_y, start_x, height, width,
-                                                   config_manager,
+                                                   music_library,
                                                    music_player,
-                                                   music_library
+                                                   *this
                                                   );
 }
 

@@ -1,24 +1,25 @@
 #pragma once
 
 #include "ui/UIComponent.h"
+#include "ui/IAppController.h"
 
 #include "model/Song.h"
 #include "player/Player.h"
-#include "io/ConfigManager.h"
 #include "model/MusicLibrary.h"
 
 class PlayerView : public UIComponent
 {
 public:
     PlayerView(int y, int x, int h, int w,
-                 ConfigManager& _config_manager,
-                 Player& _music_player,
-                 MusicLibrary& _music_library)
+               MusicLibrary& _music_library,
+               Player& _music_player,
+               IAppController& _controller)
         : UIComponent(y, x, h, w),
-            config_manager(_config_manager),
-            music_player(_music_player),
-            music_library(_music_library)
+          music_library(_music_library),
+          music_player(_music_player),
+          controller(_controller)
     {}
+
     void draw() override;
     void handleInput(int op) override;
 
@@ -30,9 +31,9 @@ private:
     static constexpr int SIDE_MARGIN = 2;
     static constexpr int SEEK_AMOUNT = 10; // in seconds
 
-    ConfigManager& config_manager;
-    Player& music_player;
     MusicLibrary& music_library;
+    Player& music_player;
+    IAppController& controller;
 
     const Song* song;
     
@@ -40,12 +41,4 @@ private:
     void drawArtistAndAlbum(int start_y);
     void drawDuration(int start_y, int start_x);
     void drawControls(int start_y, int start_x);
-
-    void handleShuffle();
-    void handlePreviousTrack();
-    void handleNextTrack();
-    void handlePlay();
-    void handlePlaybackMode();
-    void seekForward(int seconds = SEEK_AMOUNT);
-    void seekBackward(int seconds = SEEK_AMOUNT);
 };

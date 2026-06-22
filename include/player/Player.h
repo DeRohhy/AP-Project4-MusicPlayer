@@ -18,12 +18,15 @@ public:
     Player();
     ~Player();
 
+    bool isSoundInitialized() { return sound_initialized; }
     bool isPlaying();
     float getTime();
     std::string getSoundPath() { return sound_path; }
     bool isFinished() { return ma_sound_at_end(&sound); }
     bool isAtEndOfQueue() const; // ignores playback mode
     bool isAtStartOfQueue() const; // ignores playback mode
+    bool isShuffle() const { return shuffle; }
+    PlaybackMode getPlaybackMode() const { return playback_mode; }
 
     void setSound(const std::string& path);
     void setPlaylist(const Playlist* playlist);

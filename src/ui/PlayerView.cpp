@@ -7,9 +7,6 @@
 void PlayerView::draw()
 {   
     song = music_library.getSong(music_player.getSoundPath());
-
-    if (music_player.isFinished())
-        music_player.advanceTrack();
     
     refresh();
     // Clear the window before redrawing to prevent ghosting
@@ -94,9 +91,9 @@ void PlayerView::drawDuration(int start_y, int start_x)
 
 void PlayerView::drawControls(int start_y, int start_x)
 {
-    bool shuffle = config_manager.get("shuffle") == "1";
+    bool shuffle = music_player.isShuffle();
     bool is_playing = music_player.isPlaying();
-    std::string playback_mode = config_manager.get("playback_mode"); 
+    PlaybackMode playback_mode =  music_player.getPlaybackMode();
     int gap = 2;
 
     wmove(window, start_y, start_x);
@@ -138,9 +135,9 @@ void PlayerView::drawControls(int start_y, int start_x)
     wattroff(window, A_DIM);
 
     addPadding(gap);
-    wattron(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);
-    wprintw(window, "[r]%s", playback_mode == "REPEAT_ONE" ? "↻₁" : "↻");
-    wattroff(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);
+    wattron(window, playback_mode != PlaybackMode::NO_REPEAT ? COLOR_PAIR(2) : A_DIM);
+    wprintw(window, "[r]%s", playback_mode == PlaybackMode::REPEAT_ONE ? "↻₁" : "↻");
+    wattroff(window, playback_mode != PlaybackMode::NO_REPEAT ? COLOR_PAIR(2) : A_DIM);
 }
 
 void PlayerView::handleInput(int op)
@@ -151,92 +148,27 @@ void PlayerView::handleInput(int op)
     switch (op)
     {
     case 's':
-        handleShuffle();
+        controller.toggleShuffle();
         break;
     case 'j':
-        handlePreviousTrack();
+        controller.previousTrack();
         break;
     case KEY_LEFT:
-        seekBackward();
+        controller.seek(-SEEK_AMOUNT);
         break;
     case 'p':
-        handlePlay();
+        controller.togglePlay();
         break;
     case KEY_RIGHT:
-        seekForward();
+        controller.seek(SEEK_AMOUNT);
         break;
     case 'l':
-        handleNextTrack();
+        controller.nextTrack();
         break;
     case 'r':
-        handlePlaybackMode();
+        controller.changePlaybackMode();
         break;
     }
 
     wrefresh(window);
-}
-
-void PlayerView::handleShuffle()
-{
-    if (config_manager.get("shuffle") == "1")
-    {
-        config_manager.set("shuffle", "0");
-        music_player.setShuffle(false);
-    }
-    else
-    {
-        config_manager.set("shuffle", "1");
-        music_player.setShuffle(true);
-    }
-}
-
-void PlayerView::handleNextTrack()
-{
-    music_player.nextSong();
-}
-
-void PlayerView::handlePreviousTrack()
-{
-    music_player.previousSong();
-}
-
-void PlayerView::handlePlay()
-{
-    if (music_player.isPlaying())
-        music_player.pause();
-    else
-        music_player.play();
-
-}
-
-void PlayerView::handlePlaybackMode() // NO_REPEAT -> REPEAT_ALL -> REPEAT_ONE -> NO_REPEAT
-{
-    std::string cur_mode = config_manager.get("playback_mode"), new_mode;
-    if (cur_mode == "NO_REPEAT")
-    {
-        new_mode = "REPEAT_ALL";
-        music_player.setPlaybackMode(PlaybackMode::REPEAT_ALL);
-    }
-    else if (cur_mode == "REPEAT_ALL")
-    {
-        new_mode = "REPEAT_ONE";
-        music_player.setPlaybackMode(PlaybackMode::REPEAT_ONE);
-    }
-    else
-    {
-        new_mode = "NO_REPEAT";
-        music_player.setPlaybackMode(PlaybackMode::NO_REPEAT);
-    }
-    
-    config_manager.set("playback_mode", new_mode);
-}
-
-void PlayerView::seekForward(int seconds)
-{
-    music_player.seekBy(SEEK_AMOUNT);
-}
-
-void PlayerView::seekBackward(int seconds)
-{
-    music_player.seekBy(-SEEK_AMOUNT);
 }

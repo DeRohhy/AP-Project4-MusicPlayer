@@ -57,6 +57,9 @@ void App::run()
     {
         draw();
 
+        if (music_player.isFinished())
+            advanceTrack();
+
         int op = getch();
         switch (op)
         {
@@ -108,6 +111,67 @@ void App::draw()
     
 }
 
+void App::togglePlay() 
+{
+    if (music_player.isPlaying())
+        music_player.pause();
+    else
+        music_player.play();
+}
+void App::toggleShuffle() 
+{
+    bool cur = music_player.isShuffle();
+    music_player.setShuffle(!cur);
+    config_manager.set("shuffle", std::to_string(!cur));
+}
+
+void App::nextTrack()
+{
+    music_player.nextSong();
+    if (music_player.isSoundInitialized())
+        config_manager.set("last_played", music_player.getSoundPath());
+    music_player.play();
+}
+
+void App::previousTrack()
+{
+    music_player.previousSong();
+    if (music_player.isSoundInitialized())
+        config_manager.set("last_played", music_player.getSoundPath());
+    music_player.play();
+}
+
+void App::advanceTrack()
+{
+    if (music_player.getPlaybackMode() == PlaybackMode::NO_REPEAT && music_player.isAtEndOfQueue())
+        return;
+    if (music_player.getPlaybackMode() == PlaybackMode::REPEAT_ONE)
+    {
+        music_player.play();
+        return;
+    }
+
+    nextTrack();
+}
+
+void App::changePlaybackMode() // NO_REPEAT -> REPEAT_ALL -> REPEAT_ONE -> NO_REPEAT
+{
+    PlaybackMode cur_mode = music_player.getPlaybackMode();
+    if (cur_mode == PlaybackMode::NO_REPEAT)
+        music_player.setPlaybackMode(PlaybackMode::REPEAT_ALL);
+    else if (cur_mode == PlaybackMode::REPEAT_ALL)
+        music_player.setPlaybackMode(PlaybackMode::REPEAT_ONE);
+    else
+        music_player.setPlaybackMode(PlaybackMode::NO_REPEAT);
+}
+
+void App::seek(int seconds)
+{
+    music_player.seekBy(seconds);
+}
+
+
+
 void App::init_player_view()
 {
     int start_x, start_y, height, width;
@@ -117,9 +181,9 @@ void App::init_player_view()
     start_x = 0;
 
     player_view = std::make_unique<PlayerView>(start_y, start_x, height, width,
-                                               config_manager,
+                                               music_library,
                                                music_player,
-                                               music_library
+                                               *this
                                               );
 }
 

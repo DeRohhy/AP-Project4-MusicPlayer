@@ -48,6 +48,8 @@ private:
     int songs_starting_index = 0;
     int selected_song = 0;
 
+    void loadPlaylist(const std::string& playlist_name);
+
     void drawHeader(int start_y);
     void showInfoHelper(int start_y) const;
     void showSong(int y, int index, const Song* song);

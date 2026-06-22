@@ -6,13 +6,8 @@
 
 void PlaylistView::draw()
 {
-    std::string playlist_name = config_manager.get("active_playlist");
-    auto result = music_library.getPlaylist(playlist_name);
-    
-    if (!result.has_value())
-        return;
-
-    active_playlist = result.value();
+    std::string current_active = config_manager.get("active_playlist");
+    loadPlaylist(current_active);
 
     refresh();
     // Clear the window before redrawing to prevent ghosting
@@ -46,7 +41,20 @@ void PlaylistView::handleInput(int op)
         
         break;
     }
+}
 
+void PlaylistView::loadPlaylist(const std::string& playlist_name)
+{
+    if (playlist_name == active_playlist.getPlaylistName())
+        return;
+
+    auto result = music_library.getPlaylist(playlist_name);
+
+    if (result.has_value())
+    {
+        active_playlist = result.value();
+        songs_starting_index = selected_song = 0;
+    }
 }
 
 void PlaylistView::drawHeader(int start_y)

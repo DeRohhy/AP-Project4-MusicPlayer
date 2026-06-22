@@ -27,7 +27,8 @@ public:
     void handleInput(int op) override;
     
 private:
-    static constexpr int MAX_PLAYLIST_VIEW = 8;
+    static constexpr int MAX_VISIBLE_PLAYLISTS = 8;
+    static constexpr int SIDE_MARGIN = 2;
     
     ConfigManager& config_manager;
     Player& music_player;
@@ -38,8 +39,8 @@ private:
     int playlists_start_index = 0;
     int selected_playlist = 0;
 
-    void drawHeader();
-    void showPlaylists();
+    void drawHeader(int start_y);
+    void showPlaylists(int start_y);
 
     void handleKeyUp();
     void handleKeyDown();

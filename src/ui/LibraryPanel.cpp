@@ -3,16 +3,17 @@
 
 void LibraryPanel::draw()
 {
-    visible_playlists = music_library.getPlaylistsRange(playlists_start_index, MAX_PLAYLIST_VIEW);
+    visible_playlists = music_library.getPlaylistsRange(playlists_start_index, MAX_VISIBLE_PLAYLISTS);
 
     refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
-
     drawOutline();
 
-    drawHeader();
-    showPlaylists();
+    int start_y = 1;
+    drawHeader(start_y);
+    drawDivider(start_y + 1);
+    showPlaylists(start_y + 2);
     showControls();
 
     wrefresh(window);
@@ -40,24 +41,24 @@ void LibraryPanel::handleInput(int op)
 
 }
 
-void LibraryPanel::drawHeader()
+void LibraryPanel::drawHeader(int start_y)
 {
     wattron(window, A_BOLD | COLOR_PAIR(1));
-    mvwprintw(window, 1, 2, "☰ Your Library");
+    mvwprintw(window, start_y, SIDE_MARGIN, "☰ Your Library");
     wattroff(window, A_BOLD | COLOR_PAIR(1));
 }
 
-void LibraryPanel::showPlaylists()
+void LibraryPanel::showPlaylists(int start_y)
 {
     if (visible_playlists.empty())
     {
         wattron(window, A_DIM);
-        mvwprintw(window, 2, 2, "It's empty :(");
+        mvwprintw(window, start_y, SIDE_MARGIN, "It's empty :(");
         wattroff(window, A_DIM);
         return;
     }
     
-    int cur_y = 2;
+    int cur_y = start_y;
     for (size_t i = 0; i < visible_playlists.size(); ++i)
     {
         if (is_focused && selected_playlist == i)
@@ -67,8 +68,9 @@ void LibraryPanel::showPlaylists()
         else
             wattron(window, A_DIM);
         
-        int max_name_len = 16;
-        mvwprintw(window, cur_y++, 2, "▶ %s",  fit(visible_playlists[i].getPlaylistName(), max_name_len).c_str());
+        const int max_name_len = 16;
+        mvwprintw(window, cur_y++, SIDE_MARGIN,
+                  "▶ %s", fit(visible_playlists[i].getPlaylistName(), max_name_len).c_str());
         
         if (is_focused && selected_playlist == i)
             wattroff(window, COLOR_PAIR(1));
@@ -78,11 +80,11 @@ void LibraryPanel::showPlaylists()
             wattroff(window, A_DIM);
     }
 
-    if (music_library.getPlaylistAmount() >= MAX_PLAYLIST_VIEW)
+    if (music_library.getPlaylistAmount() >= MAX_VISIBLE_PLAYLISTS)
     {
-        drawScrollBar(2, width - 2,
-                      MAX_PLAYLIST_VIEW,
-                      MAX_PLAYLIST_VIEW, music_library.getPlaylistAmount(),
+        drawScrollBar(start_y, width - SIDE_MARGIN,
+                      MAX_VISIBLE_PLAYLISTS,
+                      MAX_VISIBLE_PLAYLISTS, music_library.getPlaylistAmount(),
                       playlists_start_index
                      );
     }
@@ -90,10 +92,10 @@ void LibraryPanel::showPlaylists()
 
 void LibraryPanel::handleKeyUp()
 {
-    if (selected_playlist == 0)
+    if (selected_playlist == 0) 
     {
         playlists_start_index = std::max(0, playlists_start_index - 1);
-        visible_playlists = music_library.getPlaylistsRange(playlists_start_index, MAX_PLAYLIST_VIEW);
+        visible_playlists = music_library.getPlaylistsRange(playlists_start_index, MAX_VISIBLE_PLAYLISTS);
     }
     else if (selected_playlist > 0)
         selected_playlist--;
@@ -101,7 +103,7 @@ void LibraryPanel::handleKeyUp()
 
 void LibraryPanel::handleKeyDown()
 {
-    int visible_items = std::min(MAX_PLAYLIST_VIEW, (int)music_library.getPlaylistAmount());
+    int visible_items = std::min(MAX_VISIBLE_PLAYLISTS, (int)music_library.getPlaylistAmount());
     if (selected_playlist + 1 == visible_items &&
         playlists_start_index + visible_items < (int)music_library.getPlaylistAmount()
     )
@@ -114,12 +116,13 @@ void LibraryPanel::handleKeyDown()
 
 void LibraryPanel::showControls()
 {
+    int gap = 1;
     wattron(window, A_DIM);
-    wmove(window, height - 2, 2);
+    wmove(window, height - SIDE_MARGIN, SIDE_MARGIN);
     wprintw(window, "[up][↑]");
-    addPadding(1);
+    addPadding(gap);
     wprintw(window, "[down]↓");
-    addPadding(1);
+    addPadding(gap);
     wprintw(window, "[enter]↵");
     wattroff(window, A_DIM);
 }

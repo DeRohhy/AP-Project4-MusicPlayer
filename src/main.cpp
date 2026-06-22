@@ -5,15 +5,15 @@
 // Constants: UPPER_SNAKE_CASE
 // =================================================
 
-#include "ui/UI.h"
+#include "ui/App.h"
 #include <clocale> // Needed for setlocale
 
 int main()
 {
     std::setlocale(LC_ALL, ""); // fixes unicodes not showing properly
 
-    UI ui;
-    ui.run();
+    App app;
+    app.run();
 
     return 0;
 }

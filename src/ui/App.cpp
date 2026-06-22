@@ -1,0 +1,160 @@
+#include "ui/App.h"
+
+#include <ncurses.h>
+#include <algorithm>
+#include <vector>
+
+#include <iostream>
+
+App::App()
+{
+    initscr();
+    cbreak(); // allow break from app with control + c
+    noecho(); // doesnt show user input on screen
+    keypad(stdscr, TRUE);
+    curs_set(false); // make cursor invisible
+    timeout(100); // ignores user input every 100 milliseconds
+
+    if (has_colors())
+    {
+        start_color();
+        use_default_colors();
+        
+        init_pair(1, COLOR_WHITE, -1); // main text        
+        init_pair(2, COLOR_GREEN, -1); // accent color
+        init_pair(3, COLOR_RED, -1); // error color
+    }
+}
+
+App::~App()
+{
+    keypad(stdscr, FALSE);
+    curs_set(true);
+    endwin();
+}
+
+void App::run()
+{
+    load_last_song();
+    
+    init_player_view();
+    init_library_panel();
+    init_playlist_view();
+
+    std::vector<UIComponent*> components = {
+        player_view.get(),
+        library_panel.get(),
+        playlist_view.get(),
+    };
+    int focused_index = 0;
+    components[focused_index]->setFocus(true);
+
+    bool running = true;
+
+
+    draw();
+    while (running)
+    {
+        draw();
+
+        int op = getch();
+        switch (op)
+        {
+        case 'q':
+        case 'Q':
+        case '0':
+            running = false;
+            break;
+        case '\t': // switch focus when user hits tab
+            components[focused_index]->setFocus(false);
+            focused_index = (focused_index + 1) % components.size();
+            components[focused_index]->setFocus(true);
+            break;
+        default:
+            components[focused_index]->handleInput(op);
+        }
+
+        refresh();
+    }
+
+}
+
+void App::draw()
+{
+    int cur_screen_height, cur_screen_width;
+    getmaxyx(stdscr, cur_screen_height, cur_screen_width);
+
+    clear();
+
+
+    if (cur_screen_height < SCREEN_HEIGHT || cur_screen_width < SCREEN_WIDTH)
+    {
+        attron(COLOR_PAIR(3));
+        mvprintw(cur_screen_height / 2 - 1, 0, "Terminal too small!");
+        mvprintw(cur_screen_height / 2, 0, 
+            "Please resize to at least %dx%d", SCREEN_WIDTH, SCREEN_HEIGHT);
+        attroff(COLOR_PAIR(3));
+        
+        attron(A_DIM);
+        mvprintw(cur_screen_height / 2 + 1, 0, "[q]qAppt");
+        attroff(A_DIM);
+        refresh();
+        return;
+    }
+
+    player_view->draw();
+    library_panel->draw();
+    playlist_view->draw();
+    
+}
+
+void App::init_player_view()
+{
+    int start_x, start_y, height, width;
+    height = 4;
+    width = SCREEN_WIDTH;
+    start_y = SCREEN_HEIGHT - 4;
+    start_x = 0;
+
+    player_view = std::make_unique<PlayerView>(start_y, start_x, height, width,
+                                               config_manager,
+                                               music_player,
+                                               music_library
+                                              );
+}
+
+void App::init_library_panel()
+{
+    int start_x, start_y, height, width;
+    height = SCREEN_HEIGHT - 4;
+    width = 28;
+    start_y = 0;
+    start_x = 0;
+
+    library_panel = std::make_unique<LibraryPanel>(start_y, start_x, height, width,
+                                                   config_manager,
+                                                   music_player,
+                                                   music_library
+                                                  );
+}
+
+void App::init_playlist_view()
+{
+    int start_x, start_y, height, width;
+    height = SCREEN_HEIGHT - 4;
+    width = SCREEN_WIDTH - 28;
+    start_y = 0;
+    start_x = 28;
+
+    playlist_view = std::make_unique<PlaylistView>(start_y, start_x, height, width,
+                                                   config_manager,
+                                                   music_player,
+                                                   music_library
+                                                  );
+}
+
+void App::load_last_song()
+{
+    std::string song_path = config_manager.get("last_played");
+    music_player.setSound(song_path);
+}

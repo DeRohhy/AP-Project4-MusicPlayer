@@ -51,7 +51,6 @@ void App::run()
 
     bool running = true;
 
-
     draw();
     while (running)
     {
@@ -59,6 +58,8 @@ void App::run()
 
         if (music_player.isFinished())
             advanceTrack();
+
+        playlist_view->loadPlaylist(config_manager.get("focused_playlist"));        
 
         int op = getch();
         switch (op)
@@ -168,9 +169,28 @@ void App::changePlaybackMode() // NO_REPEAT -> REPEAT_ALL -> REPEAT_ONE -> NO_RE
 void App::selectPlaylist(const std::string& playlist_name)
 {
     config_manager.set("focused_playlist", playlist_name);
-
 }
 
+void App::activatePlaylist(const std::string& playlist_name)
+{
+    if (config_manager.get("active_playlist") != playlist_name)
+    {
+        music_player.setPlaylist(music_library.getPlaylistPointer(playlist_name));
+        config_manager.set("active_playlist", playlist_name);
+    }
+}
+
+void App::playSong(const std::string& path)
+{
+    const Song* song = music_library.getSong(path);
+
+    if (!song)
+        return;
+
+    music_player.setSound(song->getPath());
+    config_manager.set("last_played", song->getPath());
+    music_player.play();
+}
 
 void App::seek(int seconds)
 {
@@ -218,9 +238,9 @@ void App::init_playlist_view()
     start_x = 28;
 
     playlist_view = std::make_unique<PlaylistView>(start_y, start_x, height, width,
-                                                   config_manager,
+                                                   music_library,
                                                    music_player,
-                                                   music_library
+                                                   *this
                                                   );
 }
 

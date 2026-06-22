@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ui/UIComponent.h"
+#include "ui/IAppController.h"
 
 #include "model/Playlist.h"
 
@@ -14,25 +15,27 @@ class PlaylistView : public UIComponent
 {
 public:
     PlaylistView(int y, int x, int h, int w,
-                 ConfigManager& _config_manager,
-                 Player& _music_player,
-                 MusicLibrary& _music_library)
+               MusicLibrary& _music_library,
+               Player& _music_player,
+               IAppController& _controller)
         : UIComponent(y, x, h, w),
-            config_manager(_config_manager),
-            music_player(_music_player),
-            music_library(_music_library)
+          music_library(_music_library),
+          music_player(_music_player),
+          controller(_controller)
     {}
 
     void draw() override;
     void handleInput(int op) override;
 
+    void loadPlaylist(const std::string& playlist_name);
+
 private:
     static constexpr int MAX_VISIBLE_SONGS = 5;
     static constexpr int SIDE_MARGIN = 2;
 
-    ConfigManager& config_manager;
-    Player& music_player;
     MusicLibrary& music_library;
+    Player& music_player;
+    IAppController& controller;
 
     Playlist active_playlist;
 
@@ -48,8 +51,6 @@ private:
     int songs_starting_index = 0;
     int selected_song = 0;
 
-    void loadPlaylist(const std::string& playlist_name);
-
     void drawHeader(int start_y);
     void showInfoHelper(int start_y) const;
     void showSong(int y, int index, const Song* song);
@@ -58,5 +59,4 @@ private:
 
     void handleKeyUp();
     void handleKeyDown();
-    void handlePlaySong();
 };

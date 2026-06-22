@@ -6,10 +6,6 @@
 
 void PlaylistView::draw()
 {
-    std::string current_active = config_manager.get("focused_playlist");
-    if (current_active.empty()) current_active = config_manager.get("active_playlist");
-    loadPlaylist(current_active);
-
     refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
@@ -38,8 +34,8 @@ void PlaylistView::handleInput(int op)
     case '\n':
     case '\r':
     case KEY_ENTER:
-        handlePlaySong();
-        
+        controller.activatePlaylist(active_playlist.getPlaylistName());
+        controller.playSong(active_playlist.getSong(selected_song)->getPath());
         break;
     }
 }
@@ -188,22 +184,4 @@ void PlaylistView::handleKeyDown()
         songs_starting_index++;
 
     selected_song++;
-}
-
-void PlaylistView::handlePlaySong()
-{
-    const Song* song = active_playlist.getSong(selected_song);
-
-    if (!song)
-        return;
-
-    music_player.setSound(song->getPath());
-    config_manager.set("last_played", song->getPath());
-
-    if (config_manager.get("active_playlist") != active_playlist.getPlaylistName())
-    {
-        config_manager.set("active_playlist", active_playlist.getPlaylistName());
-        music_player.setPlaylist(&active_playlist);
-    }
-    music_player.play();
 }

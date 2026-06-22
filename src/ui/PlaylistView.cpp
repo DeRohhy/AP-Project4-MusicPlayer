@@ -13,6 +13,7 @@ void PlaylistView::draw()
 
     int start_y = 1;
     drawHeader(start_y);
+    showControls(start_y);
     showSongs(start_y + 3);
 
     wrefresh(window);
@@ -161,7 +162,15 @@ void PlaylistView::showSongs(int start_y)
 
 void PlaylistView::showControls(int start_y)
 {
-    
+    int gap = 1;
+    wattron(window, A_DIM);
+    wmove(window, start_y, SIDE_MARGIN * 2 + width / 2);
+    wprintw(window, "[up][↑]");
+    addPadding(gap);
+    wprintw(window, "[down]↓");
+    addPadding(gap);
+    wprintw(window, "[enter]↵");
+    wattroff(window, A_DIM);
 }
 
 void PlaylistView::handleKeyUp()

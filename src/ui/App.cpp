@@ -232,7 +232,7 @@ void App::init_library_panel()
 void App::init_playlist_view()
 {
     int start_x, start_y, height, width;
-    height = SCREEN_HEIGHT - 4;
+    height = SCREEN_HEIGHT - (4 + 7);
     width = SCREEN_WIDTH - 28;
     start_y = 0;
     start_x = 28;

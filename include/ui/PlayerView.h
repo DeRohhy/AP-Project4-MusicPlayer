@@ -27,6 +27,7 @@ private:
     static constexpr size_t MAX_ARTIST_LEN = 16;
     static constexpr size_t MAX_ALBUM_LEN = 16;
     static constexpr int DURATION_BAR_LEN = 25;
+    static constexpr int SIDE_MARGIN = 2;
 
     ConfigManager& config_manager;
     Player& music_player;
@@ -34,10 +35,10 @@ private:
 
     const Song* song;
     
-    void drawTitle();
-    void drawArtistAndAlbum();
-    void drawDuration();
-    void drawControls();
+    void drawTitle(int start_y);
+    void drawArtistAndAlbum(int start_y);
+    void drawDuration(int start_y, int start_x);
+    void drawControls(int start_y, int start_x);
 
     void handleShuffle();
     void handlePreviousTrack();

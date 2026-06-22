@@ -14,50 +14,59 @@ void PlayerView::draw()
 
     drawOutline();
 
-    drawTitle();
-    drawArtistAndAlbum();
-    drawDuration();
-    drawControls();
+    const int start_y = 1, start_x = 42;
+
+    drawTitle(start_y);
+    drawArtistAndAlbum(start_y + 1);
+    drawDuration(start_y, start_x);
+    drawControls(start_y + 1, start_x);
     wrefresh(window);
 }
 
-void PlayerView::drawTitle()
+void PlayerView::drawTitle(int start_y)
 {
+    if (!song)
+        return;
+
     wattron(window, A_BOLD | COLOR_PAIR(1));
     
     std::ostringstream ss;
     ss << "♫ " << fit(song->getTitle(), MAX_TITLE_LEN);
-    mvwprintw(window, 1, 2, ss.str().c_str());
+    mvwprintw(window, start_y, SIDE_MARGIN, ss.str().c_str());
     
     wattroff(window, A_BOLD | COLOR_PAIR(1));
 }
 
-void PlayerView::drawArtistAndAlbum()
+void PlayerView::drawArtistAndAlbum(int start_y)
 {
+    if (!song)
+        return;
+
     wattron(window, A_DIM);
 
     std::ostringstream ss;
     ss << fit(song->getArtist(), MAX_ARTIST_LEN) 
        << " • " << fit(song->getAlbum(), MAX_ALBUM_LEN);
        
-    mvwprintw(window, 2, 2, ss.str().c_str());
+    mvwprintw(window, start_y, SIDE_MARGIN, ss.str().c_str());
     
     wattroff(window, A_DIM);   
 }
 
-void PlayerView::drawDuration()
+void PlayerView::drawDuration(int start_y, int start_x)
 {
-    int cur_time = (int)music_player.getTime();
-    int full = ((double)cur_time / (double)song->getDuration()) * DURATION_BAR_LEN;
+    int cur_time = music_player.isPlaying() ? (int)music_player.getTime() : 0;
+    int full = (song ? ((double)cur_time / (double)song->getDuration()) * DURATION_BAR_LEN : 0);
     int remaining = DURATION_BAR_LEN - full;
+    int gap = 1;
 
-    wmove(window, 1, 40);
+    wmove(window, start_y, start_x);
 
     wattron(window, A_DIM);
     waddstr(window, timeToStr(cur_time).c_str());
     wattroff(window, A_DIM);
 
-    addPadding(1);
+    addPadding(gap);
 
     // draw the completed progress bar (Color 1, Bold)
     wattron(window, A_BOLD | COLOR_PAIR(1));
@@ -73,43 +82,45 @@ void PlayerView::drawDuration()
         waddstr(window, "─");
     wattroff(window, A_DIM);
 
-    addPadding(1);
+    addPadding(gap);
 
     wattron(window, A_DIM);
-    waddstr(window, timeToStr(song->getDuration()).c_str());
+    waddstr(window, timeToStr(song ? song->getDuration() : 0).c_str());
     wattroff(window, A_DIM);
 }
 
-void PlayerView::drawControls()
+void PlayerView::drawControls(int start_y, int start_x)
 {
     bool shuffle = config_manager.get("shuffle") == "1";
+    bool is_playing = music_player.isPlaying();
     std::string playback_mode = config_manager.get("playback_mode"); 
+    int gap = 3;
+
+    wmove(window, 2, start_x);
     
-    wmove(window, 2, 40);
-    
-    addPadding(3);
+    addPadding(gap);
     
     wattron(window, shuffle ? COLOR_PAIR(2) : A_DIM);
     wprintw(window, "[s]⇄");
     wattroff(window, shuffle ? COLOR_PAIR(2) : A_DIM);
     
-    addPadding(3);
+    addPadding(gap);
     wattron(window, A_DIM);
     wprintw(window, "[j]⏮");
     wattroff(window, A_DIM);
-    addPadding(3);
+    addPadding(gap);
 
 
-    wattron(window, music_player.isPlaying() ? COLOR_PAIR(2) : A_DIM);
-    wprintw(window, music_player.isPlaying() ? "[p]⏸" : "[p]⏵");
-    wattroff(window, music_player.isPlaying() ? COLOR_PAIR(2) : A_DIM);
-    addPadding(3);
+    wattron(window, is_playing ? COLOR_PAIR(2) : A_DIM);
+    wprintw(window, is_playing ? "[p]⏸" : "[p]⏵");
+    wattroff(window, is_playing ? COLOR_PAIR(2) : A_DIM);
+    addPadding(gap);
 
     wattron(window, A_DIM);
     wprintw(window, "[l]⏭");
     wattroff(window, A_DIM);
 
-    addPadding(3);
+    addPadding(gap);
     wattron(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);
     wprintw(window, "[r]%s", playback_mode == "REPEAT_ONE" ? "↻₁" : "↻");
     wattroff(window, playback_mode != "NO_REPEAT" ? COLOR_PAIR(2) : A_DIM);

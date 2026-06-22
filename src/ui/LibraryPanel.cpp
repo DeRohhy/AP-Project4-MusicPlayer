@@ -35,7 +35,7 @@ void LibraryPanel::handleInput(int op)
     case '\n':
     case '\r':
     case KEY_ENTER:
-        config_manager.set("active_playlist", visible_playlists[selected_playlist].getPlaylistName());
+        config_manager.set("focused_playlist", visible_playlists[selected_playlist].getPlaylistName());
         break;
     }
 

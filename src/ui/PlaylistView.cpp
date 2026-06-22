@@ -6,7 +6,8 @@
 
 void PlaylistView::draw()
 {
-    std::string current_active = config_manager.get("active_playlist");
+    std::string current_active = config_manager.get("focused_playlist");
+    if (current_active.empty()) current_active = config_manager.get("active_playlist");
     loadPlaylist(current_active);
 
     refresh();
@@ -189,9 +190,10 @@ void PlaylistView::handlePlaySong()
     const Song* song = active_playlist.getSong(selected_song);
 
     if (!song)
-        throw std::runtime_error("Could not located song");
+        return;
 
     music_player.setSound(song->getPath());
     config_manager.set("last_played", song->getPath());
+    config_manager.set("active_playlist", active_playlist.getPlaylistName());
     music_player.play();
 }

@@ -39,6 +39,7 @@ bool ConfigManager::isValidField(std::string key)
         "shuffle",
         "playback_mode",
         "active_playlist",
+        "focused_playlist",
         "last_played",
     };
 

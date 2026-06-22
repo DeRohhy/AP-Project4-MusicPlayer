@@ -8,9 +8,9 @@ UI::UI()
 {
     initscr();
     cbreak(); // allow break from app with control + c
-    noecho(); // doesnt show user input on screen (might get removed)
+    noecho(); // doesnt show user input on screen
     keypad(stdscr, TRUE);
-    curs_set(false); // make cursor invisible (might get removed)
+    curs_set(false); // make cursor invisible
     timeout(100); // ignores user input every 100 milliseconds
 
     if (has_colors())
@@ -33,9 +33,6 @@ UI::~UI()
 
 void UI::run()
 {
-    music_player.setSound(music_library.all_songs[4].get()->getPath());
-    // music_player.play();
-
     init_player_view();
     init_library_panel();
     init_playlist_view();
@@ -111,7 +108,7 @@ void UI::init_player_view()
     int start_x, start_y, height, width;
     height = 4;
     width = SCREEN_WIDTH;
-    start_y = 15;
+    start_y = SCREEN_HEIGHT - 4;
     start_x = 0;
 
     player_view = std::make_unique<PlayerView>(start_y, start_x, height, width,
@@ -124,7 +121,7 @@ void UI::init_player_view()
 void UI::init_library_panel()
 {
     int start_x, start_y, height, width;
-    height = 15;
+    height = SCREEN_HEIGHT - 4;
     width = 28;
     start_y = 0;
     start_x = 0;
@@ -139,7 +136,7 @@ void UI::init_library_panel()
 void UI::init_playlist_view()
 {
     int start_x, start_y, height, width;
-    height = 15;
+    height = SCREEN_HEIGHT - 4;
     width = SCREEN_WIDTH - 28;
     start_y = 0;
     start_x = 28;

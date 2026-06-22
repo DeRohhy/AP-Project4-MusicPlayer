@@ -18,8 +18,8 @@ public:
 
     void draw();
 private:
-    static constexpr int SCREEN_HEIGHT = 10;
-    static constexpr int SCREEN_WIDTH = 78;
+    static constexpr int SCREEN_HEIGHT = 32;
+    static constexpr int SCREEN_WIDTH = 90;
 
     ConfigManager config_manager;
     MusicLibrary music_library;

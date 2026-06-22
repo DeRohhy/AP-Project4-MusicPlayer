@@ -65,7 +65,7 @@ void ConfigManager::load()
         std::getline(ss, key, ':'); // settings are save in key:value format
 
         std::string value = "";
-        ss >> value;
+        getline(ss, value);
 
         if (isValidField(key))
             config[key] = value;

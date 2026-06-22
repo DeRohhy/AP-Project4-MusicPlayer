@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+#include <iostream>
+
 UI::UI()
 {
     initscr();
@@ -33,6 +35,8 @@ UI::~UI()
 
 void UI::run()
 {
+    load_last_song();
+    
     init_player_view();
     init_library_panel();
     init_playlist_view();
@@ -81,6 +85,7 @@ void UI::draw()
     getmaxyx(stdscr, cur_screen_height, cur_screen_width);
 
     clear();
+
 
     if (cur_screen_height < SCREEN_HEIGHT || cur_screen_width < SCREEN_WIDTH)
     {
@@ -146,4 +151,10 @@ void UI::init_playlist_view()
                                                    music_player,
                                                    music_library
                                                   );
+}
+
+void UI::load_last_song()
+{
+    std::string song_path = config_manager.get("last_played");
+    music_player.setSound(song_path);
 }

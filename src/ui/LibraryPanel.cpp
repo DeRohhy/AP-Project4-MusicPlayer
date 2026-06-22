@@ -61,7 +61,7 @@ void LibraryPanel::showPlaylists(int start_y)
     int cur_y = start_y;
     for (size_t i = 0; i < visible_playlists.size(); ++i)
     {
-        if (is_focused && selected_playlist == i)
+        if (selected_playlist == i)
             wattron(window, COLOR_PAIR(1));
         else if (visible_playlists[i].getPlaylistName() == config_manager.get("active_playlist"))
             wattron(window, COLOR_PAIR(2));
@@ -72,7 +72,7 @@ void LibraryPanel::showPlaylists(int start_y)
         mvwprintw(window, cur_y++, SIDE_MARGIN,
                   "▶ %s", fit(visible_playlists[i].getPlaylistName(), max_name_len).c_str());
         
-        if (is_focused && selected_playlist == i)
+        if (selected_playlist == i)
             wattroff(window, COLOR_PAIR(1));
         else if (visible_playlists[i].getPlaylistName() == config_manager.get("active_playlist"))
             wattroff(window, COLOR_PAIR(2));

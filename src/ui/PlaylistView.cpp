@@ -163,6 +163,11 @@ void PlaylistView::showSongs(int start_y)
     }
 }
 
+void PlaylistView::showControls(int start_y)
+{
+    
+}
+
 void PlaylistView::handleKeyUp()
 {
     if (selected_song <= 0)

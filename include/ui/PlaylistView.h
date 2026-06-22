@@ -54,6 +54,7 @@ private:
     void showInfoHelper(int start_y) const;
     void showSong(int y, int index, const Song* song);
     void showSongs(int start_y);
+    void showControls(int start_y);
 
     void handleKeyUp();
     void handleKeyDown();

@@ -28,7 +28,9 @@ private:
     std::unique_ptr<LibraryPanel> library_panel;
     std::unique_ptr<PlaylistView> playlist_view;
 
+
     void init_player_view();
     void init_library_panel();
     void init_playlist_view();
+    void load_last_song();
 };

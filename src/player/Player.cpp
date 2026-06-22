@@ -17,8 +17,9 @@ Player::~Player()
 
 void Player::setSound(const std::string& path)
 {
+    ma_sound_uninit(&sound);
     if (ma_sound_init_from_file(&engine, path.c_str(), MA_SOUND_FLAG_STREAM, NULL, NULL, &sound) != MA_SUCCESS)
-        throw std::runtime_error("Failed to set sound");
+        return;
     sound_path = path;
 }
 

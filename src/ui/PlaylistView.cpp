@@ -115,14 +115,14 @@ void PlaylistView::showSong(int start_y, int index, const Song* song)
         "",
     };
 
-    if (selected_song == index)
+    if (is_focused && selected_song == index)
         wattron(window, COLOR_PAIR(1));
     else if (song->getPath() == music_player.getSoundPath())
         wattron(window, COLOR_PAIR(2));
     else 
         wattron(window, A_DIM);
     drawRow(start_y, first_row_cells);
-    if (selected_song == index)
+    if (is_focused && selected_song == index)
         wattroff(window, COLOR_PAIR(1));
     else if (song->getPath() == music_player.getSoundPath())
         wattroff(window, COLOR_PAIR(2));
@@ -199,6 +199,11 @@ void PlaylistView::handlePlaySong()
 
     music_player.setSound(song->getPath());
     config_manager.set("last_played", song->getPath());
-    config_manager.set("active_playlist", active_playlist.getPlaylistName());
+
+    if (config_manager.get("active_playlist") != active_playlist.getPlaylistName())
+    {
+        config_manager.set("active_playlist", active_playlist.getPlaylistName());
+        music_player.setPlaylist(&active_playlist);
+    }
     music_player.play();
 }

@@ -35,7 +35,7 @@ App::~App()
 
 void App::run()
 {
-    load_last_song();
+    load_last_data();
     
     init_player_view();
     init_library_panel();
@@ -153,8 +153,23 @@ void App::init_playlist_view()
                                                   );
 }
 
-void App::load_last_song()
+void App::load_last_data()
 {
     std::string song_path = config_manager.get("last_played");
     music_player.setSound(song_path);
+
+    std::string playlist_name = config_manager.get("active_playlist");
+    music_player.setPlaylist(music_library.getPlaylistPointer(playlist_name));
+
+    std::string mode = config_manager.get("playback_mode");
+
+    if (mode == "NO_REPEAT")
+        music_player.setPlaybackMode(PlaybackMode::NO_REPEAT);
+    else if (mode == "REPEAT_ONE")
+        music_player.setPlaybackMode(PlaybackMode::REPEAT_ONE);
+    if (mode == "REPEAT_ALL")
+        music_player.setPlaybackMode(PlaybackMode::REPEAT_ALL);
+
+    std::string shuffle = config_manager.get("shuffle");
+    music_player.setShuffle(shuffle == "1");
 }

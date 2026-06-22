@@ -8,6 +8,9 @@ void PlayerView::draw()
 {   
     song = music_library.getSong(music_player.getSoundPath());
 
+    if (music_player.isFinished())
+        music_player.advanceTrack();
+    
     refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
@@ -176,19 +179,25 @@ void PlayerView::handleInput(int op)
 void PlayerView::handleShuffle()
 {
     if (config_manager.get("shuffle") == "1")
+    {
         config_manager.set("shuffle", "0");
+        music_player.setShuffle(false);
+    }
     else
+    {
         config_manager.set("shuffle", "1");
+        music_player.setShuffle(true);
+    }
 }
 
 void PlayerView::handleNextTrack()
 {
-
+    music_player.nextSong();
 }
 
 void PlayerView::handlePreviousTrack()
 {
-
+    music_player.previousSong();
 }
 
 void PlayerView::handlePlay()
@@ -200,15 +209,24 @@ void PlayerView::handlePlay()
 
 }
 
-void PlayerView::handlePlaybackMode()
+void PlayerView::handlePlaybackMode() // NO_REPEAT -> REPEAT_ALL -> REPEAT_ONE -> NO_REPEAT
 {
     std::string cur_mode = config_manager.get("playback_mode"), new_mode;
     if (cur_mode == "NO_REPEAT")
+    {
         new_mode = "REPEAT_ALL";
+        music_player.setPlaybackMode(PlaybackMode::REPEAT_ALL);
+    }
     else if (cur_mode == "REPEAT_ALL")
+    {
         new_mode = "REPEAT_ONE";
+        music_player.setPlaybackMode(PlaybackMode::REPEAT_ONE);
+    }
     else
+    {
         new_mode = "NO_REPEAT";
+        music_player.setPlaybackMode(PlaybackMode::NO_REPEAT);
+    }
     
     config_manager.set("playback_mode", new_mode);
 }

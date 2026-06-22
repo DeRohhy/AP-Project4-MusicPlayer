@@ -21,11 +21,12 @@ public:
 
     const Song* getSong(const std::string& path) const;
     std::optional<Playlist> getPlaylist(const std::string& playlist_name) const;
+    const Playlist* getPlaylistPointer(const std::string& playlist_name) const;
     
     std::vector<Playlist> getPlaylistsRange(int starting_index, int n) const;
     size_t getPlaylistAmount() const { return playlists.size(); }
     
-// private:
+private:
     std::vector<std::unique_ptr<Song>> all_songs;
     std::vector<Playlist> playlists;
 };

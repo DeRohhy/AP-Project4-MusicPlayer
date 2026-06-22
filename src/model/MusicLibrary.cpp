@@ -20,6 +20,17 @@ std::optional<Playlist> MusicLibrary::getPlaylist(const std::string& playlist_na
     return std::nullopt;
 }
 
+const Playlist* MusicLibrary::getPlaylistPointer(const std::string& playlist_name) const
+{
+    for (const auto& playlist: playlists)
+    {
+        if (playlist.getPlaylistName() == playlist_name)
+            return &playlist;
+    }
+    return nullptr;
+}
+
+
 std::vector<Playlist> MusicLibrary::getPlaylistsRange(int starting_index, int n) const
 {
     std::vector<Playlist> result;

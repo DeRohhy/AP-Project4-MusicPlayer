@@ -14,7 +14,7 @@ void PlayerView::draw()
 
     drawOutline();
 
-    const int start_y = 1, start_x = 42;
+    static constexpr int start_y = 1, start_x = 42;
 
     drawTitle(start_y);
     drawArtistAndAlbum(start_y + 1);
@@ -85,7 +85,7 @@ void PlayerView::drawDuration(int start_y, int start_x)
     addPadding(gap);
 
     wattron(window, A_DIM);
-    waddstr(window, timeToStr(song ? song->getDuration() : 0).c_str());
+    waddstr(window, timeToStr(song ? std::max(cur_time, song->getDuration()) : 0).c_str());
     wattroff(window, A_DIM);
 }
 

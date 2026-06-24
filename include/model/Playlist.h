@@ -16,12 +16,12 @@ public:
     size_t getSongAmount() const { return songs.size(); }
     const Song* getSong(int i) const { return songs[i]; }
 
-    void sortByTitle();
-    void sortByArtist();
-    void sortByAlbum();
-    void sortByGenre();
+    void sortByTitle(bool sort_descending = false);
+    void sortByArtist(bool sort_descending = false);
+    void sortByAlbum(bool sort_descending = false);
+    void sortByGenre(bool sort_descending = false);
     void sortByYear(bool sort_descending = false);
-    void sortByDuration();
+    void sortByDuration(bool sort_descending = false);
 
 private:
     std::string playlist_name;

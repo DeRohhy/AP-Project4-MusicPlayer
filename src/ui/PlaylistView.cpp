@@ -15,7 +15,8 @@ void PlaylistView::draw()
     drawHeader(start_y);
     showControls(start_y);
     showSongs(start_y + 3);
-
+    showSortingControls(getHeight() - SIDE_MARGIN * 2);
+    
     wrefresh(window);
 }
 
@@ -23,6 +24,9 @@ void PlaylistView::handleInput(int op)
 {
     if (!is_focused)
         return;
+
+    if (op - '0' >= 1 && op - '0' <= sorting_options.size())
+        handleSortKey(op);
 
     switch (op)
     {
@@ -43,7 +47,7 @@ void PlaylistView::handleInput(int op)
 
 void PlaylistView::loadPlaylist(const std::string& playlist_name)
 {
-    if (playlist_name == active_playlist.getPlaylistName())
+    if (!revert_sort && playlist_name == active_playlist.getPlaylistName())
         return;
 
     auto result = music_library.getPlaylist(playlist_name);
@@ -51,8 +55,10 @@ void PlaylistView::loadPlaylist(const std::string& playlist_name)
     if (result.has_value())
     {
         active_playlist = result.value();
-        songs_starting_index = selected_song = 0;
+        if (!revert_sort) // dont reset scroll bar position if revert_sort is requested
+            songs_starting_index = selected_song = 0;
     }
+    revert_sort = false;
 }
 
 void PlaylistView::drawHeader(int start_y)
@@ -173,6 +179,24 @@ void PlaylistView::showControls(int start_y)
     wattroff(window, A_DIM);
 }
 
+void PlaylistView::showSortingControls(int start_y)
+{
+    drawDivider(start_y - 1);
+    int gap = 1;
+    wmove(window, start_y, SIDE_MARGIN);
+    
+    wprintw(window, "Sort by:");
+    for (const auto& [title, field, key]: sorting_options)
+    {
+        addPadding(gap);
+        wattron(window, selected_sort == field ? COLOR_PAIR(2) : A_DIM);
+        wprintw(window, "[%c]%s", key, title.c_str());
+        if (selected_sort == field)
+        wprintw(window, is_sort_ascending ? "▲" : "▼");
+        wattroff(window, selected_sort == field ? COLOR_PAIR(2) : A_DIM);
+    }
+}
+
 void PlaylistView::handleKeyUp()
 {
     if (selected_song <= 0)
@@ -193,4 +217,45 @@ void PlaylistView::handleKeyDown()
         songs_starting_index++;
 
     selected_song++;
+}
+
+void PlaylistView::handleSortKey(int key)
+{
+    const SortOption new_sort = sorting_options[int(key - '0') - 1].option;
+    if (new_sort == selected_sort)
+    {
+        if (is_sort_ascending)
+            is_sort_ascending = false;
+        else // turn off the sort
+        {
+            selected_sort = SortOption::NONE;
+            revert_sort = true;
+            return;
+        }
+    }
+    else
+    {
+        selected_sort = new_sort;
+        is_sort_ascending = true;
+    }
+
+    switch (key)
+    {
+        case '1':
+            active_playlist.sortByTitle(!is_sort_ascending);
+            break;
+        case '2':
+            active_playlist.sortByArtist(!is_sort_ascending);
+            break;
+        case '3':
+            active_playlist.sortByAlbum(!is_sort_ascending);
+            break;
+        case '4':
+            active_playlist.sortByYear(!is_sort_ascending);
+            break;
+        case '5':
+            active_playlist.sortByDuration(!is_sort_ascending);
+            break;
+
+    }
 }

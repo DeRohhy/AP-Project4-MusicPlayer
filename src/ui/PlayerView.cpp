@@ -55,7 +55,7 @@ void PlayerView::drawArtistAndAlbum(int start_y)
 
 void PlayerView::drawDuration(int start_y, int start_x)
 {
-    int cur_time = music_player.isPlaying() ? (int)music_player.getTime() : 0;
+    int cur_time = (int)music_player.getTime();
     int full = (song ? ((double)cur_time / (double)song->getDuration()) * DURATION_BAR_LEN : 0);
     int remaining = DURATION_BAR_LEN - full;
     int gap = 1;

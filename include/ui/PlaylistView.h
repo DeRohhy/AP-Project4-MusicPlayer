@@ -48,6 +48,7 @@ private:
     IAppController& controller;
 
     Playlist active_playlist;
+    Playlist active_playlist_copy;
 
     struct Column { std::string title; int width; };
     const std::vector<Column> columns
@@ -57,6 +58,8 @@ private:
         {"Album", 16},
         {"⏱", 8},
     };
+
+    bool revert_playlist = false;
 
     struct SortingField { std::string title; SortOption option; char key; };
     const std::vector<SortingField> sorting_options {
@@ -68,7 +71,9 @@ private:
     };
     bool is_sort_ascending = true;
     SortOption selected_sort = SortOption::NONE;
-    bool revert_sort = false;
+
+    bool is_searching = false;
+    std::string search_query;
 
     int songs_starting_index = 0;
     int selected_song = 0;
@@ -79,8 +84,12 @@ private:
     void showSongs(int start_y);
     void showControls(int start_y);
     void showSortingControls(int start_y);
+    void showSearchBox(int start_y);
 
     void handleKeyUp();
     void handleKeyDown();
     void handleSortKey(int key);
+    void handleSearchInput(int op);
+
+    void performSearch();
 };

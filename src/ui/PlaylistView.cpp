@@ -11,11 +11,15 @@ void PlaylistView::draw()
     werase(window);
     drawOutline();
 
+    if (!is_focused) is_searching = false;
+    
     int start_y = 1;
     drawHeader(start_y);
     showControls(start_y);
     showSongs(start_y + 3);
-    showSortingControls(getHeight() - SIDE_MARGIN * 2);
+    int sort_control_pos_y = getHeight() - SIDE_MARGIN * 2;
+    showSortingControls(sort_control_pos_y);
+    showSearchBox(sort_control_pos_y + 1);
     
     wrefresh(window);
 }
@@ -24,6 +28,20 @@ void PlaylistView::handleInput(int op)
 {
     if (!is_focused)
         return;
+
+    if (op == '\\') // clear all filters
+    {
+        search_query.clear();
+        selected_sort = SortOption::NONE;
+        revert_playlist = true;
+        return;
+    }
+
+    if (is_searching)
+    {
+        handleSearchInput(op);
+        return;
+    }
 
     if (op - '0' >= 1 && op - '0' <= sorting_options.size())
         handleSortKey(op);
@@ -36,9 +54,18 @@ void PlaylistView::handleInput(int op)
     case KEY_DOWN:
         handleKeyDown();
         break;
+    case '/':
+        is_searching = true;
+        search_query = "";
+        break;
+    case '\\':
+        search_query.clear();
+        break;
     case '\n':
     case '\r':
     case KEY_ENTER:
+        if (active_playlist.getSongAmount() == 0)
+            break;
         controller.activatePlaylist(active_playlist.getPlaylistName());
         controller.playSong(active_playlist.getSong(selected_song)->getPath());
         break;
@@ -47,18 +74,24 @@ void PlaylistView::handleInput(int op)
 
 void PlaylistView::loadPlaylist(const std::string& playlist_name)
 {
-    if (!revert_sort && playlist_name == active_playlist.getPlaylistName())
+    if (revert_playlist)
+    {
+        active_playlist = active_playlist_copy;
+        songs_starting_index = selected_song = 0;
+        revert_playlist = false;
+        return;
+    }
+
+    if (playlist_name == active_playlist.getPlaylistName())
         return;
 
     auto result = music_library.getPlaylist(playlist_name);
 
     if (result.has_value())
     {
-        active_playlist = result.value();
-        if (!revert_sort) // dont reset scroll bar position if revert_sort is requested
-            songs_starting_index = selected_song = 0;
+        active_playlist = active_playlist_copy = result.value();
+        songs_starting_index = selected_song = 0;
     }
-    revert_sort = false;
 }
 
 void PlaylistView::drawHeader(int start_y)
@@ -185,16 +218,37 @@ void PlaylistView::showSortingControls(int start_y)
     int gap = 1;
     wmove(window, start_y, SIDE_MARGIN);
     
-    wprintw(window, "Sort by:");
+    wattron(window, COLOR_PAIR(1));
+    wprintw(window, "Sort by: ");
+    wattroff(window, COLOR_PAIR(1));
+
     for (const auto& [title, field, key]: sorting_options)
     {
-        addPadding(gap);
         wattron(window, selected_sort == field ? COLOR_PAIR(2) : A_DIM);
         wprintw(window, "[%c]%s", key, title.c_str());
         if (selected_sort == field)
         wprintw(window, is_sort_ascending ? "▲" : "▼");
         wattroff(window, selected_sort == field ? COLOR_PAIR(2) : A_DIM);
+        addPadding(gap);
     }
+}
+
+void PlaylistView::showSearchBox(int start_y)
+{
+    wmove(window, start_y, SIDE_MARGIN);
+
+    wattron(window, is_searching ? COLOR_PAIR(2) : COLOR_PAIR(1));
+    wprintw(window, "[/]Search: ");
+    wattroff(window, is_searching ? COLOR_PAIR(2) : COLOR_PAIR(1));
+
+    
+    wattron(window, A_DIM);
+    wprintw(window, "%s", search_query.c_str());
+    if (is_searching)
+        wprintw(window, "▓");
+    std::string controls = "[enter]↵ [\\]clear";
+    mvwprintw(window, start_y + 1, width - controls.size(), "%s", controls.c_str());
+    wattroff(window, A_DIM);
 }
 
 void PlaylistView::handleKeyUp()
@@ -229,7 +283,7 @@ void PlaylistView::handleSortKey(int key)
         else // turn off the sort
         {
             selected_sort = SortOption::NONE;
-            revert_sort = true;
+            revert_playlist = true;
             return;
         }
     }
@@ -238,6 +292,8 @@ void PlaylistView::handleSortKey(int key)
         selected_sort = new_sort;
         is_sort_ascending = true;
     }
+
+    search_query.clear();
 
     switch (key)
     {
@@ -258,4 +314,71 @@ void PlaylistView::handleSortKey(int key)
             break;
 
     }
+}
+
+void PlaylistView::handleSearchInput(int op)
+{
+    if (op == '\n' || op == '\r' || op == KEY_ENTER)
+    {
+        is_searching = false;
+        return;
+    }
+
+    static constexpr int ASCII_DEL = 127;
+    if ((op == KEY_BACKSPACE || op == ASCII_DEL) && !search_query.empty())
+        search_query.pop_back();
+    else if (!(search_query.empty() && op == ' ') && isprint(op)) // prevents getting queries with starting empty spaces
+        search_query.push_back((char)op);
+    
+    performSearch();
+}
+
+void PlaylistView::performSearch()
+{
+    // remove leading spaces
+    std::string sanitized_query = search_query;
+    while (!sanitized_query.empty() && sanitized_query.back() == ' ')
+        sanitized_query.pop_back();
+
+    if (sanitized_query.empty())
+    {
+        revert_playlist = true;
+        return;
+    }
+    selected_sort = SortOption::NONE;
+
+    Playlist filtered;
+    filtered.setPlaylistName(active_playlist_copy.getPlaylistName());
+
+    for (size_t i = 0; i < active_playlist_copy.getSongAmount(); i++)
+    {
+        const Song* song = active_playlist_copy.getSong(i);
+        const std::string queries[] = {
+            song->getTitle(),
+            song->getAlbum(),
+            song->getArtist(),
+        };
+
+        // case-insensitive search
+        for (const auto& query: queries)
+        {
+            auto it = std::search(
+                query.begin(), query.end(),
+                sanitized_query.begin(), sanitized_query.end(),
+                [](char A, char B) 
+                {
+                    return std::tolower(A) == std::tolower(B);
+                }
+            );
+
+            if (it != query.end())
+            {
+                filtered.addSong(song);
+                break;
+            }
+        }
+    }
+
+    selected_song = songs_starting_index = 0;
+    active_playlist = filtered;
 }

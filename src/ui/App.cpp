@@ -66,7 +66,6 @@ void App::run()
         {
         case 'q':
         case 'Q':
-        case '0':
             running = false;
             break;
         case '\t': // switch focus when user hits tab

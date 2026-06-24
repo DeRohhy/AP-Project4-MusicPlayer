@@ -16,6 +16,11 @@ public:
     
     virtual ~UIComponent() { delwin(window); }
 
+    int getY() { return start_y; }
+    int getX() { return start_x; }
+    int getHeight() { return height; }
+    int getWidth() { return width; }
+
     void setFocus(bool val) { is_focused = val; };
 
     virtual void draw() = 0;

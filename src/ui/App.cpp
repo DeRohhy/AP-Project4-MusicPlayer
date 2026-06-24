@@ -197,53 +197,6 @@ void App::seek(int seconds)
     music_player.seekBy(seconds);
 }
 
-
-
-void App::init_player_view()
-{
-    int start_x, start_y, height, width;
-    height = 4;
-    width = SCREEN_WIDTH;
-    start_y = SCREEN_HEIGHT - 4;
-    start_x = 0;
-
-    player_view = std::make_unique<PlayerView>(start_y, start_x, height, width,
-                                               music_library,
-                                               music_player,
-                                               *this
-                                              );
-}
-
-void App::init_library_panel()
-{
-    int start_x, start_y, height, width;
-    height = SCREEN_HEIGHT - 4;
-    width = 28;
-    start_y = 0;
-    start_x = 0;
-
-    library_panel = std::make_unique<LibraryPanel>(start_y, start_x, height, width,
-                                                   music_library,
-                                                   music_player,
-                                                   *this
-                                                  );
-}
-
-void App::init_playlist_view()
-{
-    int start_x, start_y, height, width;
-    height = SCREEN_HEIGHT - (4 + 7);
-    width = SCREEN_WIDTH - 28;
-    start_y = 0;
-    start_x = 28;
-
-    playlist_view = std::make_unique<PlaylistView>(start_y, start_x, height, width,
-                                                   music_library,
-                                                   music_player,
-                                                   *this
-                                                  );
-}
-
 void App::load_last_data()
 {
     std::string song_path = config_manager.get("last_played");
@@ -264,3 +217,52 @@ void App::load_last_data()
     std::string shuffle = config_manager.get("shuffle");
     music_player.setShuffle(shuffle == "1");
 }
+
+void App::init_player_view()
+{
+    int start_x, start_y, height, width;
+    height = 4;
+    width = SCREEN_WIDTH;
+    start_y = SCREEN_HEIGHT - height;
+    start_x = 0;
+
+    player_view = std::make_unique<PlayerView>(
+        start_y, start_x, height, width,
+        music_library,
+        music_player,
+        *this
+    );
+}
+
+void App::init_library_panel()
+{
+    int start_x, start_y, height, width;
+    height = SCREEN_HEIGHT - player_view->getHeight();
+    width = 28;
+    start_y = 0;
+    start_x = 0;
+
+    library_panel = std::make_unique<LibraryPanel>(
+        start_y, start_x, height, width,
+        music_library,
+        music_player,
+        *this
+    );
+}
+
+void App::init_playlist_view()
+{
+    int start_x, start_y, height, width;
+    height = SCREEN_HEIGHT - player_view->getHeight();
+    width = SCREEN_WIDTH - library_panel->getWidth();
+    start_y = 0;
+    start_x = library_panel->getWidth();
+
+    playlist_view = std::make_unique<PlaylistView>(
+        start_y, start_x, height, width,
+        music_library,
+        music_player,
+        *this
+    );
+}
+

@@ -85,11 +85,8 @@ void PlaylistView::loadPlaylist(const std::string& playlist_name)
 
     auto result = music_library.getPlaylist(playlist_name);
 
-    if (result.has_value())
-    {
-        active_playlist = active_playlist_copy = result.value();
-        songs_starting_index = selected_song = 0;
-    }
+    active_playlist = active_playlist_copy = result.has_value() ? result.value() : Playlist();
+    songs_starting_index = selected_song = 0;
 }
 
 void PlaylistView::drawHeader(int start_y)

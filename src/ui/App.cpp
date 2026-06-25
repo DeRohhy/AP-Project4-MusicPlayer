@@ -109,7 +109,6 @@ void App::draw()
         attroff(A_DIM);
         wnoutrefresh(stdscr);
         doupdate();
-        is_screen_small = true;
         return;
     }
 
@@ -216,6 +215,7 @@ void App::load_last_data()
     std::string playlist_name = config_manager.get("active_playlist");
     music_player.setPlaylist(music_library.getPlaylistPointer(playlist_name));
 
+    
     std::string mode = config_manager.get("playback_mode");
 
     if (mode == "NO_REPEAT")

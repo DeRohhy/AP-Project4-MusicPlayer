@@ -32,6 +32,11 @@ std::vector<Playlist> M3uLoader::loadPlaylists(const std::string& dir, MusicLibr
         playlists.push_back(playlist);
     }
 
+    // Playlist empty_playlist;
+    // empty_playlist.setPlaylistName("Playlist not found");
+
+    // playlists.push_back(empty_playlist);
+
     return playlists;
 }
 

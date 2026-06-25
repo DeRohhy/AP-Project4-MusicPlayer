@@ -201,7 +201,7 @@ int Player::getCurrentSongIndex()
     if (!sound_initialized || !active_playlist)
         return -1;
 
-    for (size_t i = 0; i < active_playlist->getSongAmount(); i++)
+    for (size_t i = 0; i < play_queue.size(); i++)
     {
         if (sound_path == active_playlist->getSong(play_queue[i])->getPath())
             return i;
@@ -242,6 +242,9 @@ void Player::previousSong()
 
 void Player::advanceTrack()
 {
+    if (!active_playlist)
+        return;
+    
     switch (playback_mode)
     {
     case PlaybackMode::NO_REPEAT:

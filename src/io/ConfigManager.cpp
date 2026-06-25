@@ -53,6 +53,9 @@ void ConfigManager::load()
     if (!file.is_open())
         throw std::runtime_error("Failed to open config file: " + config_path);
     
+    config["shuffle"] = "0";
+    config["playback_mode"] = "NO_REPEAT";
+    
 
     std::string line;
     while(std::getline(file, line))
@@ -67,9 +70,10 @@ void ConfigManager::load()
         std::string value = "";
         getline(ss, value);
 
-        if (isValidField(key))
-            config[key] = value;
+        if (isValidField(key) && !value.empty())
+            config[key] = value;        
     }
+
 }
 
 void ConfigManager::save()

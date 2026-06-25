@@ -8,7 +8,6 @@ void PlayerView::draw()
 {   
     song = music_library.getSong(music_player.getSoundPath());
     
-    refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
 
@@ -20,7 +19,7 @@ void PlayerView::draw()
     drawArtistAndAlbum(start_y + 1);
     drawDuration(start_y, start_x);
     drawControls(start_y + 1, start_x - 1);
-    wrefresh(window);
+    wnoutrefresh(window);
 }
 
 void PlayerView::drawTitle(int start_y)

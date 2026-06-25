@@ -64,6 +64,14 @@ void App::run()
         int op = getch();
         switch (op)
         {
+        case KEY_RESIZE:
+            clear();
+            refresh();
+            
+            for (auto* ui_window: components)
+                ui_window->revertWindowSize();
+            
+            break;
         case 'q':
         case 'Q':
             running = false;
@@ -87,28 +95,32 @@ void App::draw()
     int cur_screen_height, cur_screen_width;
     getmaxyx(stdscr, cur_screen_height, cur_screen_width);
 
-    clear();
-
-
     if (cur_screen_height < SCREEN_HEIGHT || cur_screen_width < SCREEN_WIDTH)
     {
+        erase(); // erase stdscr buffer, no forced full-screen clearok
         attron(COLOR_PAIR(3));
         mvprintw(cur_screen_height / 2 - 1, 0, "Terminal too small!");
-        mvprintw(cur_screen_height / 2, 0, 
+        mvprintw(cur_screen_height / 2, 0,
             "Please resize to at least %dx%d", SCREEN_WIDTH, SCREEN_HEIGHT);
         attroff(COLOR_PAIR(3));
-        
+
         attron(A_DIM);
-        mvprintw(cur_screen_height / 2 + 1, 0, "[q]qAppt");
+        mvprintw(cur_screen_height / 2 + 1, 0, "[q] quit");
         attroff(A_DIM);
-        refresh();
+        wnoutrefresh(stdscr);
+        doupdate();
+        is_screen_small = true;
         return;
     }
+
+    erase();
+    wnoutrefresh(stdscr);
 
     player_view->draw();
     library_panel->draw();
     playlist_view->draw();
-    
+
+    doupdate(); // single atomic screen update
 }
 
 void App::togglePlay() 

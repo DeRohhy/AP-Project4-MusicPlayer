@@ -6,7 +6,6 @@
 
 void PlaylistView::draw()
 {
-    refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
     drawOutline();
@@ -20,8 +19,7 @@ void PlaylistView::draw()
     int sort_control_pos_y = getHeight() - SIDE_MARGIN * 2;
     showSortingControls(sort_control_pos_y);
     showSearchBox(sort_control_pos_y + 1);
-    
-    wrefresh(window);
+    wnoutrefresh(window);
 }
 
 void PlaylistView::handleInput(int op)

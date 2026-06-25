@@ -81,3 +81,9 @@ void UIComponent::drawScrollBar(int pos_y, int pos_x,
         mvwprintw(window, cur_y++, thumb_x, "┃");
     wattroff(window, A_DIM);
 }
+
+void UIComponent::revertWindowSize()
+{
+    wresize(window, height, width);
+    mvwin(window, start_y, start_x);
+}

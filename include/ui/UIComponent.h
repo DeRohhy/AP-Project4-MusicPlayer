@@ -14,8 +14,8 @@ public:
             refresh();
         }
     
-    virtual ~UIComponent() { delwin(window); }
-
+    virtual ~UIComponent() { if (window) delwin(window); }
+    
     int getY() { return start_y; }
     int getX() { return start_x; }
     int getHeight() { return height; }
@@ -37,6 +37,8 @@ public:
                        int height,
                        int visible_items, int total_items,
                        int scroll_pos);
+
+    void revertWindowSize();
 
 protected:
     WINDOW* window;

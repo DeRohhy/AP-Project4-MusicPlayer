@@ -5,7 +5,6 @@ void LibraryPanel::draw()
 {
     visible_playlists = music_library.getPlaylistsRange(playlists_start_index, MAX_VISIBLE_PLAYLISTS);
 
-    refresh();
     // Clear the window before redrawing to prevent ghosting
     werase(window);
     drawOutline();
@@ -16,7 +15,7 @@ void LibraryPanel::draw()
     showPlaylists(start_y + 2);
     showControls();
 
-    wrefresh(window);
+    wnoutrefresh(window);
 }
 
 void LibraryPanel::handleInput(int op)

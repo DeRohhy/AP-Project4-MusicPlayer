@@ -119,6 +119,10 @@ void App::draw()
     library_panel->draw();
     playlist_view->draw();
 
+    attron(A_DIM);
+    mvprintw(SCREEN_HEIGHT, 0, "[tab]focus [q]quit");
+    attroff(A_DIM);
+
     doupdate(); // single atomic screen update
 }
 

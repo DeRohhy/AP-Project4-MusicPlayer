@@ -40,7 +40,7 @@ void Player::setPlaylist(const Playlist* playlist)
 {
     active_playlist = playlist;
 
-    if (!sound_initialized || !active_playlist)
+    if (!active_playlist)
         return;
 
     if (shuffle)

@@ -13,7 +13,7 @@ std::vector<Playlist> M3uLoader::loadPlaylists(const std::string& dir, MusicLibr
     {
         if (!entry.is_regular_file() || entry.path().extension() != ".m3u")
             continue;
-        
+
         std::ifstream file(entry.path());
         if (!file) continue;
 
